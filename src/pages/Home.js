@@ -3,7 +3,6 @@ import './Videos.css';
 import './Home.css';
 import VideoCard from '../components/VideoCard';
 
-
 const API = 'https://back-barcapp.onrender.com';
 
 const Home = () => {
@@ -16,8 +15,8 @@ const Home = () => {
     const fetchAll = async () => {
       try {
         const [resVideos, resShorts] = await Promise.all([
-          fetch(`${API}/videos`),
-          fetch(`${API}/videos/shorts`)
+          fetch(`${API}/api/videos`),
+          fetch(`${API}/api/videos/shorts`)
         ]);
 
         const videos = await resVideos.json();
