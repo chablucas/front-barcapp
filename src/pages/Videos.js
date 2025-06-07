@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import VideoCard from '../components/VideoCard'; // ✅ Ajout ici
 import './Videos.css';
 
-const API = 'https://back-barcapp.onrender.com/';
+const API = 'https://back-barcapp.onrender.com'; // ✅ Corrigé sans /api
 
 const Videos = () => {
   const [videos, setVideos] = useState([]);
@@ -17,18 +18,9 @@ const Videos = () => {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const res = await fetch(`${API}/videos`, {
-          headers: {
-            Accept: 'application/json'
-          }
-        });
-
-        const contentType = res.headers.get("content-type");
-        if (!res.ok || !contentType || !contentType.includes("application/json")) {
-          throw new Error("Réponse invalide du serveur");
-        }
-
+        const res = await fetch(`${API}/videos`);
         const data = await res.json();
+
         const nonShorts = data.filter(video => video.isShort !== true);
         setVideos(nonShorts);
       } catch (err) {
@@ -81,35 +73,9 @@ const Videos = () => {
         <p style={{ padding: '20px', color: 'white' }}>Aucune vidéo trouvée.</p>
       ) : (
         <div className="videos-grid">
-          {filtered.map(video => {
-            const youtubeId = video.videoUrl?.includes('v=') ? video.videoUrl.split('v=')[1] : '';
-            return (
-              <div className="video-card" key={video._id}>
-                <a href={`/video/${video._id}`}>
-                  <img
-                    src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
-                    alt={video.title}
-                  />
-                </a>
-
-                <div className="video-meta">
-                  <span className="badge">{video.competition}</span>
-                  <span className="date">
-                    {new Date(video.createdAt).toLocaleDateString('fr-FR')}
-                  </span>
-                </div>
-
-                <h3>{video.title}</h3>
-                <p>{video.description}</p>
-
-                <div className="video-stats">
-                  <span>👍 {video.likesCount}</span>
-                  <span>👎 {video.dislikesCount}</span>
-                  <span>💬 {video.commentCount}</span>
-                </div>
-              </div>
-            );
-          })}
+          {filtered.map(video => (
+            <VideoCard key={video._id} video={video} /> // ✅ Appel direct du composant
+          ))}
         </div>
       )}
     </div>
