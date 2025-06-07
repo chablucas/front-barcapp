@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 import './Profil.css';
 import LineupDisplay from '../components/LineupDisplay';
 
@@ -226,29 +227,32 @@ const Profil = () => {
           {likedVideos.length === 0 ? (
             <p>Aucune vidéo likée.</p>
           ) : (
-            likedVideos.map((video) => (
-              <div className="profil-video-card" key={video._id}>
-                <a href={`/video/${video._id}`}>
-                  <img
-                    src={`https://img.youtube.com/vi/${video.videoUrl.split('v=')[1]}/mqdefault.jpg`}
-                    alt={video.title}
-                  />
-                </a>
-                <div className="profil-video-info">
-                  <span className="badge">{video.competition}</span>
-                  <span className="date">
-                    {new Date(video.createdAt).toLocaleDateString('fr-FR')}
-                  </span>
+            likedVideos.map((video) => {
+              const youtubeId = video.videoUrl.includes('v=') ? video.videoUrl.split('v=')[1] : '';
+              return (
+                <div className="profil-video-card" key={video._id}>
+                  <Link to={`/video/${video._id}`}>
+                    <img
+                      src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
+                      alt={video.title}
+                    />
+                  </Link>
+                  <div className="profil-video-info">
+                    <span className="badge">{video.competition}</span>
+                    <span className="date">
+                      {new Date(video.createdAt).toLocaleDateString('fr-FR')}
+                    </span>
+                  </div>
+                  <h3>{video.title}</h3>
+                  <p>{video.description}</p>
+                  <div className="profil-stats">
+                    <span>👍 {video.likesCount}</span>
+                    <span>👎 {video.dislikesCount}</span>
+                    <span>💬 {video.commentCount}</span>
+                  </div>
                 </div>
-                <h3>{video.title}</h3>
-                <p>{video.description}</p>
-                <div className="profil-stats">
-                  <span>👍 {video.likesCount}</span>
-                  <span>👎 {video.dislikesCount}</span>
-                  <span>💬 {video.commentCount}</span>
-                </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       </div>

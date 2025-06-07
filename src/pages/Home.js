@@ -15,8 +15,8 @@ const Home = () => {
     const fetchAll = async () => {
       try {
         const [resVideos, resShorts] = await Promise.all([
-          fetch(`${API}/api/videos`),
-          fetch(`${API}/api/videos/shorts`)
+          fetch(`${API}/videos`),
+          fetch(`${API}/videos/shorts`)
         ]);
 
         const videos = await resVideos.json();
