@@ -1,0 +1,107 @@
+.login-container {
+  background-color: #004D98; /* Bleu Barça */
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-box {
+  background-color: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.login-box h2 {
+  color: #A50044; /* Grana */
+  margin-bottom: 20px;
+}
+
+.login-box form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.login-box input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+.login-box button {
+  background-color: #FDB913; /* Jaune Barça */
+  color: black;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.login-box button:hover {
+  background-color: #e2a800;
+}
+
+.register-link {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.register-link a {
+  color: #A50044;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.google-button {
+  margin-top: 15px;
+  padding: 10px 16px;
+  background-color: white;
+  color: #444;
+  border: 1px solid #ccc;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background-color 0.2s;
+}
+
+.google-button:hover {
+  background-color: #f2f2f2;
+}
+
+@media (max-width: 600px) {
+  .login-box {
+    padding: 25px;
+    margin: 20px;
+  }
+
+  .login-box h2 {
+    font-size: 22px;
+  }
+
+  .login-box input {
+    padding: 10px;
+    font-size: 15px;
+  }
+
+  .login-box button,
+  .google-button {
+    font-size: 15px;
+    padding: 10px;
+  }
+
+  .register-link {
+    font-size: 13px;
+  }
+}

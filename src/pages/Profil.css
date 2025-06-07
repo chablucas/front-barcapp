@@ -1,0 +1,165 @@
+.profil-page {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  background-color: #004D98;
+  min-height: 100vh;
+  color: white;
+}
+
+.profil-center {
+  flex: 2;
+  position: relative;
+}
+
+.profil-header {
+  margin-bottom: 40px;
+}
+
+.profil-banner {
+  width: 100%;
+  height: 180px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+}
+
+
+.profil-avatar-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: -40px;
+  margin-left: 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.profil-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 4px solid #FDB913;
+  object-fit: cover;
+  background-color: white;
+}
+
+.profil-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.profil-buttons button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: #FDB913;
+  color: black;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.profil-username {
+  margin-left: 20px;
+  margin-top: 20px;
+}
+
+.profil-username h2 {
+  margin-bottom: 6px;
+  font-size: 22px;
+  color: #FDB913;
+}
+
+.profil-username input {
+  padding: 6px;
+  border-radius: 6px;
+  border: none;
+  margin-bottom: 5px;
+}
+
+.profil-username button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: #FDB913;
+  color: black;
+  cursor: pointer;
+}
+
+.profil-feed h3 {
+  margin-bottom: 15px;
+  color: #FDB913;
+}
+
+.profil-video-card {
+  background-color: #06397e;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 20px;
+  max-width: 600px;
+}
+
+.profil-video-card img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.profil-video-info {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 13px;
+  color: #ccc;
+}
+
+.profil-video-card h3 {
+  margin: 8px 0 4px;
+  font-size: 18px;
+  color: #FDB913;
+}
+
+.profil-video-card p {
+  font-size: 14px;
+  color: #eee;
+}
+
+.profil-stats {
+  display: flex;
+  gap: 15px;
+  margin-top: 6px;
+  font-size: 14px;
+}
+
+.profil-widgets {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.widget {
+  background-color: #06397e;
+  border-radius: 10px;
+  padding: 12px;
+  color: white;
+}
+
+.widget h4 {
+  margin-bottom: 10px;
+  color: #FDB913;
+  font-size: 16px;
+}
+
+.widget ul {
+  padding-left: 0;
+}
+
+.widget ul li {
+  list-style: none;
+  margin-bottom: 5px;
+}
+
+.widget p {
+  font-size: 14px;
+}
