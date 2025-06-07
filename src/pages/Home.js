@@ -4,7 +4,7 @@ import './Home.css';
 import VideoCard from '../components/VideoCard';
 
 
-const API = 'http://localhost:5000/api';
+const API = 'https://back-barcapp.onrender.com';
 
 const Home = () => {
   const [topVideos, setTopVideos] = useState([]);

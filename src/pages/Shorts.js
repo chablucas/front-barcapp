@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import VideoCard from '../components/VideoCard';
 import './Shorts.css';
 
-const API = 'http://localhost:5000/api';
+const API = 'https://back-barcapp.onrender.com';
 
 const Shorts = () => {
   const [shorts, setShorts] = useState([]);

@@ -19,7 +19,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:5000/api/auth/register', {
+      const res = await fetch('http://back-barcapp.onrender.com/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
@@ -29,7 +29,7 @@ const Register = () => {
       if (!res.ok) throw new Error(data.message || 'Erreur');
 
       // Connexion immédiate après inscription
-      const loginRes = await fetch('http://localhost:5000/api/auth/login', {
+      const loginRes = await fetch('http://back-barcapp.onrender.com/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: form.email, password: form.password })
@@ -78,7 +78,7 @@ const Register = () => {
           <button type="submit">S'inscrire</button>
         </form>
         <button className="google-button" onClick={() => {
-            window.location.href = 'http://localhost:5000/api/auth/google';
+            window.location.href = 'http://back-barcapp.onrender.com/api/auth/google';
         }}>
         Se connecter avec Google
         </button>

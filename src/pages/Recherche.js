@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-const API = 'http://localhost:5000/api';
+const API = 'https://back-barcapp.onrender.com';
 
 const Recherche = () => {
   const [videos, setVideos] = useState([]);

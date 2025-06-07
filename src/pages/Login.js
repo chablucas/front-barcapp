@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import { toast } from 'react-toastify';
 
-const API = 'http://localhost:5000/api';
+const API = 'https://back-barcapp.onrender.com';
 
 const Login = () => {
   const navigate = useNavigate();

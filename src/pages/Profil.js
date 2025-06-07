@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import './Profil.css';
 import LineupDisplay from '../components/LineupDisplay';
 
-const API = 'http://localhost:5000/api';
+const API = 'https://back-barcapp.onrender.com';
 
 const Profil = () => {
   const [user, setUser] = useState(null);
