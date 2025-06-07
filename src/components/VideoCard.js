@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const VideoCard = ({ video, size }) => {
+const VideoCard = ({ video }) => {
   const youtubeId = video.videoUrl?.includes('v=') ? video.videoUrl.split('v=')[1] : '';
   const [likes, setLikes] = useState(video.likesCount);
   const [dislikes, setDislikes] = useState(video.dislikesCount);
@@ -39,7 +39,7 @@ const VideoCard = ({ video, size }) => {
   };
 
   return (
-    <div className={`video-card ${size === 'small' ? 'video-card-small' : ''}`}>
+    <div className="video-card">
       <Link to={`/video/${video._id}`}>
         <img
           src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
