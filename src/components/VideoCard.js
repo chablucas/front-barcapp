@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import './VideoCard.css'; 
 
 const VideoCard = ({ video, size }) => {
   const youtubeId = video.videoUrl?.includes('v=') ? video.videoUrl.split('v=')[1] : '';
