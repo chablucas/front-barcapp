@@ -17,9 +17,18 @@ const Videos = () => {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const res = await fetch(`${API}/videos`);
-        const data = await res.json();
+        const res = await fetch(`${API}/videos`, {
+          headers: {
+            Accept: 'application/json'
+          }
+        });
 
+        const contentType = res.headers.get("content-type");
+        if (!res.ok || !contentType || !contentType.includes("application/json")) {
+          throw new Error("Réponse invalide du serveur");
+        }
+
+        const data = await res.json();
         const nonShorts = data.filter(video => video.isShort !== true);
         setVideos(nonShorts);
       } catch (err) {
@@ -73,7 +82,7 @@ const Videos = () => {
       ) : (
         <div className="videos-grid">
           {filtered.map(video => {
-            const youtubeId = video.videoUrl?.split('v=')[1] || '';
+            const youtubeId = video.videoUrl?.includes('v=') ? video.videoUrl.split('v=')[1] : '';
             return (
               <div className="video-card" key={video._id}>
                 <a href={`/video/${video._id}`}>
