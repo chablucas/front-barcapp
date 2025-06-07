@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const VideoCard = ({ video }) => {
+const VideoCard = ({ video, size }) => {
   const youtubeId = video.videoUrl?.includes('v=') ? video.videoUrl.split('v=')[1] : '';
   const [likes, setLikes] = useState(video.likesCount);
   const [dislikes, setDislikes] = useState(video.dislikesCount);
 
   const handleLike = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/videos/${video._id}/like`, {
+      const res = await fetch(`http://back-barcapp.onrender.com/api/videos/${video._id}/like`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -24,7 +24,7 @@ const VideoCard = ({ video }) => {
 
   const handleDislike = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/videos/${video._id}/dislike`, {
+      const res = await fetch(`http://back-barcapp.onrender.com/api/videos/${video._id}/dislike`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -39,7 +39,7 @@ const VideoCard = ({ video }) => {
   };
 
   return (
-    <div className="video-card">
+    <div className={`video-card ${size === 'small' ? 'video-card-small' : ''}`}>
       <Link to={`/video/${video._id}`}>
         <img
           src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
