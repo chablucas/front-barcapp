@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './Videos.css';
 
-const API = 'https://back-barcapp.onrender.com/api';
+const API = 'https://back-barcapp.onrender.com/';
 
 const Videos = () => {
   const [videos, setVideos] = useState([]);
