@@ -31,10 +31,10 @@ const Profil = () => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
-
         const userRes = await fetch(`${API}/users/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         const userData = await userRes.json();
         if (!userRes.ok) throw new Error(userData.message);
         setUser(userData);
@@ -45,11 +45,10 @@ const Profil = () => {
         const likesRes = await fetch(`${API}/users/${userData._id}/likes`);
         const likesData = await likesRes.json();
         if (!likesRes.ok) throw new Error(likesData.message);
-        setLikedVideos(likesData);
-
-        setLoading(false);
+        setLikedVideos(Array.isArray(likesData) ? likesData : []);
       } catch (err) {
         setError(err.message);
+      } finally {
         setLoading(false);
       }
     };
@@ -59,7 +58,7 @@ const Profil = () => {
         const [matchRes, lineupRes, streakRes] = await Promise.all([
           fetch(`${API}/barca/match-live`),
           fetch(`${API}/barca/lineup`),
-          fetch(`${API}/barca/streak`)
+          fetch(`${API}/barca/streak`),
         ]);
 
         const matchData = await matchRes.json();
@@ -72,7 +71,7 @@ const Profil = () => {
 
         const postes = ['GK', 'RB', 'CB1', 'CB2', 'LB', 'CM1', 'CM2', 'CAM', 'RW', 'LW', 'ST'];
         const compo = {};
-        postes.forEach((poste, i) => compo[poste] = lineupData.lineup[i] || '');
+        postes.forEach((poste, i) => (compo[poste] = lineupData.lineup[i] || ''));
         setComposition(compo);
       } catch (err) {
         console.error('Erreur widgets:', err);
@@ -228,7 +227,7 @@ const Profil = () => {
             <p>Aucune vidéo likée.</p>
           ) : (
             likedVideos.map((video) => {
-              const youtubeId = video.videoUrl.includes('v=') ? video.videoUrl.split('v=')[1] : '';
+              const youtubeId = video.videoUrl?.includes('v=') ? video.videoUrl.split('v=')[1] : '';
               return (
                 <div className="profil-video-card" key={video._id}>
                   <Link to={`/video/${video._id}`}>

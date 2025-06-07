@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import VideoCard from '../components/VideoCard';
 import './Shorts.css';
 
-const API = 'https://back-barcapp.onrender.com';
+const API = 'https://back-barcapp.onrender.com/api';
 
 const Shorts = () => {
   const [shorts, setShorts] = useState([]);
@@ -14,10 +14,10 @@ const Shorts = () => {
         const res = await fetch(`${API}/videos/shorts`);
         const data = await res.json();
 
-        console.log('📱 Shorts détectés :', data);
+        if (!Array.isArray(data)) throw new Error('Réponse inattendue du serveur.');
         setShorts(data);
       } catch (err) {
-        console.error('❌ Erreur chargement shorts:', err);
+        console.error('❌ Erreur chargement shorts:', err.message);
         setShorts([]);
       } finally {
         setLoading(false);
@@ -27,7 +27,9 @@ const Shorts = () => {
     fetchShorts();
   }, []);
 
-  if (loading) return <p style={{ padding: '20px', color: 'white' }}>Chargement des shorts...</p>;
+  if (loading) {
+    return <p style={{ padding: '20px', color: 'white' }}>Chargement des shorts...</p>;
+  }
 
   return (
     <div className="shorts-page">

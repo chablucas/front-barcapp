@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './Videos.css';
 
-const API = 'https://back-barcapp.onrender.com';
+const API = 'https://back-barcapp.onrender.com/api';
 
 const Videos = () => {
   const [videos, setVideos] = useState([]);
@@ -20,7 +20,6 @@ const Videos = () => {
         const res = await fetch(`${API}/videos`);
         const data = await res.json();
 
-        // 🎯 Filtrer uniquement les vidéos qui ne sont pas des Shorts
         const nonShorts = data.filter(video => video.isShort !== true);
         setVideos(nonShorts);
       } catch (err) {
@@ -73,32 +72,35 @@ const Videos = () => {
         <p style={{ padding: '20px', color: 'white' }}>Aucune vidéo trouvée.</p>
       ) : (
         <div className="videos-grid">
-          {filtered.map(video => (
-            <div className="video-card" key={video._id}>
-              <a href={`/video/${video._id}`}>
-                <img
-                  src={`https://img.youtube.com/vi/${video.videoUrl.split('v=')[1]}/mqdefault.jpg`}
-                  alt={video.title}
-                />
-              </a>
+          {filtered.map(video => {
+            const youtubeId = video.videoUrl?.split('v=')[1] || '';
+            return (
+              <div className="video-card" key={video._id}>
+                <a href={`/video/${video._id}`}>
+                  <img
+                    src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
+                    alt={video.title}
+                  />
+                </a>
 
-              <div className="video-meta">
-                <span className="badge">{video.competition}</span>
-                <span className="date">
-                  {new Date(video.createdAt).toLocaleDateString('fr-FR')}
-                </span>
+                <div className="video-meta">
+                  <span className="badge">{video.competition}</span>
+                  <span className="date">
+                    {new Date(video.createdAt).toLocaleDateString('fr-FR')}
+                  </span>
+                </div>
+
+                <h3>{video.title}</h3>
+                <p>{video.description}</p>
+
+                <div className="video-stats">
+                  <span>👍 {video.likesCount}</span>
+                  <span>👎 {video.dislikesCount}</span>
+                  <span>💬 {video.commentCount}</span>
+                </div>
               </div>
-
-              <h3>{video.title}</h3>
-              <p>{video.description}</p>
-
-              <div className="video-stats">
-                <span>👍 {video.likesCount}</span>
-                <span>👎 {video.dislikesCount}</span>
-                <span>💬 {video.commentCount}</span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
