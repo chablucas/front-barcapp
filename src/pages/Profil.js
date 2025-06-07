@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Profil.css';
 import LineupDisplay from '../components/LineupDisplay';
 
 const API = 'https://back-barcapp.onrender.com/api';
 
 const Profil = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [likedVideos, setLikedVideos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,14 +30,24 @@ const Profil = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
       try {
-        const token = localStorage.getItem('token');
         const userRes = await fetch(`${API}/users/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
+        if (userRes.status === 401) {
+          localStorage.removeItem('token');
+          navigate('/login');
+          return;
+        }
+
         const userData = await userRes.json();
-        if (!userRes.ok) throw new Error(userData.message);
         setUser(userData);
         setNewUsername(userData.username);
         setAvatarPreview(userData.avatar || '');
@@ -44,7 +55,6 @@ const Profil = () => {
 
         const likesRes = await fetch(`${API}/users/${userData._id}/likes`);
         const likesData = await likesRes.json();
-        if (!likesRes.ok) throw new Error(likesData.message);
         setLikedVideos(Array.isArray(likesData) ? likesData : []);
       } catch (err) {
         setError(err.message);
@@ -58,7 +68,7 @@ const Profil = () => {
         const [matchRes, lineupRes, streakRes] = await Promise.all([
           fetch(`${API}/barca/match-live`),
           fetch(`${API}/barca/lineup`),
-          fetch(`${API}/barca/streak`),
+          fetch(`${API}/barca/streak`)
         ]);
 
         const matchData = await matchRes.json();
@@ -80,7 +90,7 @@ const Profil = () => {
 
     fetchData();
     fetchWidgets();
-  }, []);
+  }, [navigate]);
 
   const handleUpdateUsername = async () => {
     try {
