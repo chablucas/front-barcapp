@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './AdminWidgets.css';
 import LineupPreview from '../components/LineupPreview';
 
-const API = 'https://back-barcapp.onrender.com';
+const API = 'https://back-barcapp.onrender.com/api';
 
 const joueursBarca = [
   'Marc-André ter Stegen', 'Joan García', 'Iñaki Peña', 'Wojciech Szczęsny',
