@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-const API = 'https://back-barcapp.onrender.com';
+const API = 'https://back-barcapp.onrender.com/api';
 
 const extractYouTubeID = (url) => {
     const match = url.match(/v=([^&]+)/);
