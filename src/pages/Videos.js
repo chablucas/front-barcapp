@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import VideoCard from '../components/VideoCard'; // ✅ Ajout ici
+import VideoCard from '../components/VideoCard';
 import './Videos.css';
 
-const API = 'https://back-barcapp.onrender.com/api'; // ✅ Corrigé sans /api
+const API = 'https://back-barcapp.onrender.com/api';
 
 const Videos = () => {
   const [videos, setVideos] = useState([]);
@@ -20,9 +20,10 @@ const Videos = () => {
       try {
         const res = await fetch(`${API}/videos`);
         const data = await res.json();
+        console.log('📦 Vidéos récupérées :', data);
 
-        const nonShorts = data.filter(video => video.isShort !== true);
-        setVideos(nonShorts);
+        // ❌ TEMP : on enlève le filtre isShort pour tout voir
+        setVideos(data);
       } catch (err) {
         console.error('❌ Erreur chargement vidéos:', err.message);
         setVideos([]);
@@ -44,7 +45,9 @@ const Videos = () => {
 
   const filtered = videos.filter(video => {
     const matchSearch = video.title?.toLowerCase().includes(query.toLowerCase());
-    const matchCompetition = competition ? video.competition === competition : true;
+    const matchCompetition = competition
+      ? video.competition?.toLowerCase() === competition.toLowerCase()
+      : true;
     return matchSearch && matchCompetition;
   });
 
@@ -74,7 +77,7 @@ const Videos = () => {
       ) : (
         <div className="videos-grid">
           {filtered.map(video => (
-            <VideoCard key={video._id} video={video} /> // ✅ Appel direct du composant
+            <VideoCard key={video._id} video={video} />
           ))}
         </div>
       )}
