@@ -68,8 +68,8 @@
 
 .search-button {
   position: absolute;
-  top: 50%;
-  right: 10px;
+  top: 55%;
+  right: 15px;
   transform: translateY(-50%);
   background: none;
   border: none;
