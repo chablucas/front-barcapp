@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Header.css';
 
-const API = 'http://localhost:5000/api';
+const API = 'https://back-barcapp.onrender.com/api';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -63,7 +63,7 @@ const Header = () => {
     <header className="header">
       <div className="header-left">
         <Link to="/">
-          <img src="http://localhost:5000/uploads/logo_barcapp.png" alt="logo" className="logo" />
+          <img src={`${API.replace('/api', '')}/uploads/logo_barcapp.png`} alt="logo" />
         </Link>
       </div>
 
