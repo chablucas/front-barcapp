@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import VideoCard from '../components/VideoCard'; // ✅ Ajout ici
 import './Videos.css';
 
-const API = 'https://back-barcapp.onrender.com'; // ✅ Corrigé sans /api
+const API = 'https://back-barcapp.onrender.com/api'; // ✅ Corrigé sans /api
 
 const Videos = () => {
   const [videos, setVideos] = useState([]);
