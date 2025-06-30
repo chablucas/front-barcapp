@@ -27,7 +27,6 @@ const Login = () => {
       localStorage.setItem('token', data.token);
       toast.success('✅ Connexion réussie !');
 
-      // 🟢 Petite pause pour garantir l’enregistrement avant redirection
       setTimeout(() => {
         console.log('Redirection vers /')
         navigate('/');
