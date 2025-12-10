@@ -1,70 +1,65 @@
-# Getting Started with Create React App
+# Barçapp – Frontend (React)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Barçapp est une application web type YouTube dédiée au FC Barcelone.  
+Ce dépôt contient **le frontend** de l’application, développé en **React** sous forme de **SPA (Single Page Application)**.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🎯 Objectifs du frontend
 
-### `npm start`
+- Afficher les résumés de matchs et vidéos liés au FC Barcelone (layout façon YouTube).
+- Proposer une expérience utilisateur aux couleurs du Barça (bleu, grana, jaune).
+- Permettre à l’utilisateur de :
+  - s’inscrire / se connecter (email + Google OAuth2),
+  - liker / disliker des vidéos,
+  - ajouter des vidéos en favoris,
+  - commenter des vidéos,
+  - consulter ses informations dans une page **Profil**.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🧩 Stack technique
 
-### `npm test`
+- **React** (SPA)
+- **react-router-dom** pour la navigation
+- **Axios** pour les appels API
+- **Context API / Hooks** (`useState`, `useEffect`, `useContext`, `useNavigate`) pour la gestion d’état
+- **JWT** côté frontend (stockage du token + décodage avec `jwt-decode`)
+- **CSS personnalisé** (thème FC Barcelone)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+> Le frontend consomme une API REST exposée par le backend Node.js / Express.
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 📁 Pages principales
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **Accueil** : liste des vidéos, filtres, layout type YouTube.
+- **Shorts** : affichage des vidéos marquées `isShort = true`.
+- **Détail d’une vidéo** : lecteur, likes/dislikes, commentaires.
+- **Profil** : infos utilisateur, favoris, vidéos likées, avatar, bannière.
+- **Admin** (si rôle `admin`) : gestion des vidéos et widgets (match en direct, série de victoires, etc.).
+- **Login / Register** : connexion classique + bouton *Se connecter avec Google*.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## ⚙️ Prérequis
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- **Node.js** (version LTS recommandée)
+- **npm** ou **yarn**
+- Une URL d’API backend fonctionnelle (Render, localhost…)
+- Les variables d’environnement correctement configurées (ex. URL de l’API).
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 🚀 Installation & démarrage
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+# Cloner le dépôt
+git clone https://github.com/TON_COMPTE/barcapp-frontend.git
+cd barcapp-frontend
 
-## Learn More
+# Installer les dépendances
+npm install
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+# Lancer l’application en mode développement
+npm start
