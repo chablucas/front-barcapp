@@ -24,7 +24,7 @@ const Profil = () => {
   const [bannerPreview, setBannerPreview] = useState('');
 
   const [matchLive, setMatchLive] = useState(null);
-  const [lineup, setLineup] = useState([]);
+  const [, setLineup] = useState([]);
   const [streak, setStreak] = useState([]);
   const [composition, setComposition] = useState({});
 
