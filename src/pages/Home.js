@@ -16,16 +16,16 @@ const Home = () => {
       try {
         const [resVideos, resShorts] = await Promise.all([
           fetch(`${API}/videos`),
-          fetch(`${API}/videos/shorts`)
+          fetch(`${API}/videos/shorts`),
         ]);
 
         const videos = await resVideos.json();
         const shortsData = await resShorts.json();
 
-        const videosOnly = videos.filter(v => !v.isShort);
-        const culersOnly = videosOnly.filter(v => v.competition === 'Avis Culers');
+        const videosOnly = videos.filter((v) => !v.isShort);
+        const culersOnly = videosOnly.filter((v) => v.competition === 'Avis Culers');
         const topLiked = videosOnly
-          .filter(v => v.competition !== 'Avis Culers')
+          .filter((v) => v.competition !== 'Avis Culers')
           .sort((a, b) => b.likesCount - a.likesCount);
 
         setTopVideos(topLiked.slice(0, 12));
@@ -41,10 +41,17 @@ const Home = () => {
     fetchAll();
   }, []);
 
-  if (loading) return <p style={{ padding: '20px', color: 'white' }}>Chargement en cours...</p>;
+  if (loading) {
+    return (
+      <p style={{ padding: '20px', color: 'white' }}>
+        Chargement en cours...
+      </p>
+    );
+  }
 
   return (
     <div className="videos-container">
+      {/* 🔥 Carrousel Les plus likées */}
       <h2>🏆 Les plus likées</h2>
       <div className="carousel-container">
         {topVideos.map((video) => (
@@ -54,13 +61,17 @@ const Home = () => {
         ))}
       </div>
 
+      {/* 🔥 Carrousel Avis des Culers (plus de grid) */}
       <h2 style={{ marginTop: '40px' }}>🎙️ Avis des Culers</h2>
-      <div className="videos-grid">
+      <div className="carousel-container">
         {culers.map((video) => (
-          <VideoCard key={video._id} video={video} />
+          <div className="carousel-item" key={video._id}>
+            <VideoCard video={video} />
+          </div>
         ))}
       </div>
 
+      {/* 🔥 Carrousel Shorts */}
       <h2 style={{ marginTop: '40px' }}>📱 Shorts du FC Barcelone</h2>
       <div className="carousel-container">
         {shorts.map((video) => (
