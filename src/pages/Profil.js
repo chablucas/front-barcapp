@@ -103,7 +103,7 @@ const Profil = () => {
         body: JSON.stringify({ username: newUsername }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
+      if (!res.ok) throw new Error(data.message || "Erreur lors de la mise à jour du pseudo.");
       setUser(data);
       setEditName(false);
       toast.success('✅ Pseudo mis à jour !');
@@ -123,9 +123,11 @@ const Profil = () => {
         body: formData,
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-      setUser(data.user);
-      setAvatarPreview(data.user.avatar);
+      if (!res.ok) throw new Error(data.message || "Erreur lors de la mise à jour de l'avatar.");
+      
+      // 🔴 Ici la correction : on considère que l'API renvoie directement l'utilisateur
+      setUser(data);
+      setAvatarPreview(data.avatar || '');
       setEditAvatar(false);
       toast.success('✅ Avatar mis à jour !');
     } catch (err) {
@@ -144,9 +146,11 @@ const Profil = () => {
         body: formData,
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-      setUser(data.user);
-      setBannerPreview(data.user.banner);
+      if (!res.ok) throw new Error(data.message || 'Erreur lors de la mise à jour de la bannière.');
+      
+      // 🔴 Même correction ici
+      setUser(data);
+      setBannerPreview(data.banner || '');
       setEditBanner(false);
       toast.success('✅ Bannière mise à jour !');
     } catch (err) {
@@ -165,7 +169,7 @@ const Profil = () => {
           <div
             className="profil-banner"
             style={{
-              backgroundImage: `url(${bannerPreview})`,
+              backgroundImage: bannerPreview ? `url(${bannerPreview})` : 'none',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               height: '180px',
@@ -187,8 +191,10 @@ const Profil = () => {
                     type="file"
                     accept="image/*"
                     onChange={(e) => {
-                      setAvatarFile(e.target.files[0]);
-                      setAvatarPreview(URL.createObjectURL(e.target.files[0]));
+                      if (!e.target.files || !e.target.files[0]) return;
+                      const file = e.target.files[0];
+                      setAvatarFile(file);
+                      setAvatarPreview(URL.createObjectURL(file));
                     }}
                   />
                   <button onClick={handleUploadAvatar}>📤 Sauvegarder</button>
@@ -202,8 +208,10 @@ const Profil = () => {
                     type="file"
                     accept="image/*"
                     onChange={(e) => {
-                      setBannerFile(e.target.files[0]);
-                      setBannerPreview(URL.createObjectURL(e.target.files[0]));
+                      if (!e.target.files || !e.target.files[0]) return;
+                      const file = e.target.files[0];
+                      setBannerFile(file);
+                      setBannerPreview(URL.createObjectURL(file));
                     }}
                   />
                   <button onClick={handleUploadBanner}>📤 Sauvegarder</button>
@@ -237,7 +245,9 @@ const Profil = () => {
             <p>Aucune vidéo likée.</p>
           ) : (
             likedVideos.map((video) => {
-              const youtubeId = video.videoUrl?.includes('v=') ? video.videoUrl.split('v=')[1] : '';
+              const youtubeId = video.videoUrl?.includes('v=')
+                ? video.videoUrl.split('v=')[1]
+                : '';
               return (
                 <div className="profil-video-card" key={video._id}>
                   <Link to={`/video/${video._id}`}>
