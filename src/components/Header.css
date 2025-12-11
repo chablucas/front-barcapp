@@ -48,15 +48,21 @@
   background-color: #ffc933;
 }
 
+/* -------------------------- */
+/*    BARRE DE RECHERCHE      */
+/* -------------------------- */
+
 .search-wrapper {
   position: relative;
   width: 300px;
   max-width: 90vw;
+  display: flex;
+  align-items: center;
 }
 
 .search-bar {
   width: 100%;
-  padding: 10px 45px 10px 15px;
+  padding: 10px 45px 10px 15px; /* place pour l’icône */
   border-radius: 20px;
   border: none;
   font-size: 16px;
@@ -66,9 +72,14 @@
   box-shadow: inset 0 0 0 2px white;
 }
 
+.search-bar::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Icône parfaitement centrée */
 .search-button {
   position: absolute;
-  top: 55%;
+  top: 50%;
   right: 15px;
   transform: translateY(-50%);
   background: none;
@@ -76,7 +87,17 @@
   font-size: 18px;
   color: white;
   cursor: pointer;
+  padding: 0;
+  line-height: 1;
 }
+
+.search-button:focus {
+  outline: none;
+}
+
+/* -------------------------- */
+/*      AVATAR & MENU         */
+/* -------------------------- */
 
 .header-right {
   flex: 0.5;
@@ -128,6 +149,10 @@
   margin-bottom: 6px;
   padding: 4px 10px;
 }
+
+/* -------------------------- */
+/*        RESPONSIVE          */
+/* -------------------------- */
 
 @media screen and (max-width: 768px) {
   .header {
