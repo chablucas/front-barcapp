@@ -15,25 +15,3 @@
   flex: 0 0 auto;
   scroll-snap-align: start;
 }
-
-.fixed-card {
-  width: 220px;
-  min-width: 220px;
-  max-width: 220px;
-  background-color: #06397e;
-  border-radius: 10px;
-  overflow: hidden;
-  padding-bottom: 10px;
-  border: 3px solid #A50044;
-}
-
-.video-card {
-  width: 220px;
-  min-width: 220px;
-  max-width: 220px;
-  background-color: #06397e;
-  border-radius: 10px;
-  overflow: hidden;
-  padding-bottom: 10px;
-  border: 3px solid #A50044;
-}

@@ -1,66 +1,83 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import './VideoCard.css';
+
+const API = 'https://back-barcapp.onrender.com/api';
 
 const VideoCard = ({ video }) => {
-  const youtubeId = video.videoUrl?.includes('v=') ? video.videoUrl.split('v=')[1] : '';
-  const [likes, setLikes] = useState(video.likesCount);
-  const [dislikes, setDislikes] = useState(video.dislikesCount);
+  // Récupération propre de l’ID YouTube
+  let youtubeId = '';
+  if (video.videoUrl?.includes('v=')) {
+    youtubeId = video.videoUrl.split('v=')[1].split('&')[0];
+  }
+
+  const [likes, setLikes] = useState(video.likesCount || 0);
+  const [dislikes, setDislikes] = useState(video.dislikesCount || 0);
 
   const handleLike = async () => {
     try {
-      const res = await fetch(`http://back-barcapp.onrender.com/api/videos/${video._id}/like`, {
+      const res = await fetch(`${API}/videos/${video._id}/like`, {
         method: 'PATCH',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       });
       const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Erreur like');
       setLikes(data.likes);
       setDislikes(data.dislikes);
     } catch (err) {
-      console.error("Erreur like:", err);
+      console.error('Erreur like:', err);
     }
   };
 
   const handleDislike = async () => {
     try {
-      const res = await fetch(`http://back-barcapp.onrender.com/api/videos/${video._id}/dislike`, {
+      const res = await fetch(`${API}/videos/${video._id}/dislike`, {
         method: 'PATCH',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       });
       const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Erreur dislike');
       setLikes(data.likes);
       setDislikes(data.dislikes);
     } catch (err) {
-      console.error("Erreur dislike:", err);
+      console.error('Erreur dislike:', err);
     }
   };
 
   return (
     <div className="video-card">
       <Link to={`/video/${video._id}`}>
-        <img
-          src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
-          alt={video.title}
-        />
+        <div className="video-thumbnail-wrapper">
+          <img
+            src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
+            alt={video.title}
+            className="video-thumbnail"
+          />
+        </div>
       </Link>
 
       <div className="video-meta">
         <span className="badge">{video.competition}</span>
         <span className="date">
-          {new Date(video.createdAt).toLocaleDateString('fr-FR')}
+          {new Date(video.createdAt || video.publishedAt).toLocaleDateString('fr-FR')}
         </span>
       </div>
 
-      <h3>{video.title}</h3>
-      <p>{video.description}</p>
+      <h3 className="video-title">{video.title}</h3>
+      <p className="video-description">{video.description}</p>
 
       <div className="video-stats">
-        <button onClick={handleLike}>👍 {likes}</button>
-        <button onClick={handleDislike}>👎 {dislikes}</button>
-        <span>💬 {video.commentCount}</span>
+        <button type="button" className="stat-button" onClick={handleLike}>
+          👍 {likes}
+        </button>
+        <button type="button" className="stat-button" onClick={handleDislike}>
+          👎 {dislikes}
+        </button>
+        <span className="stat-comments">💬 {video.commentCount || 0}</span>
       </div>
     </div>
   );
