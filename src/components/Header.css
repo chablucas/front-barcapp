@@ -79,9 +79,8 @@
 /* Icône parfaitement centrée */
 .search-button {
   position: absolute;
-  top: 50%;
   right: 12px;
-  transform: translateY(-20%);
+  top: 8px; /* 🔥 ajuste la hauteur ici */
   background: none;
   border: none;
   font-size: 20px;
@@ -90,6 +89,7 @@
   padding: 0;
   line-height: 1;
 }
+
 
 .search-button:focus {
   outline: none;
