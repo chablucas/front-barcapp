@@ -21,9 +21,18 @@ const Header = () => {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
-        if (res.ok) setUser(data);
+
+        if (res.ok) {
+          // ✅ On met le user dans le state
+          setUser(data);
+          // ✅ On le sauvegarde aussi dans le localStorage pour la Sidebar
+          localStorage.setItem('user', JSON.stringify(data));
+        } else {
+          // Si le token n'est plus valide, on nettoie
+          localStorage.removeItem('user');
+        }
       } catch (err) {
-        // tu peux log si besoin
+        localStorage.removeItem('user');
       }
     };
 
@@ -42,6 +51,7 @@ const Header = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user'); // ✅ on nettoie aussi le user ici
     navigate('/');
     window.location.reload();
   };
@@ -65,7 +75,6 @@ const Header = () => {
     <header className="header">
       <div className="header-left">
         <Link to="/">
-          {/* 🔥 Logo servi depuis le CDN Vercel (dossier public/uploads) */}
           <img src="/uploads/logo_barcapp.png" alt="logo" className="logo" />
         </Link>
       </div>
