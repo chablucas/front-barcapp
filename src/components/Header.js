@@ -22,7 +22,9 @@ const Header = () => {
         });
         const data = await res.json();
         if (res.ok) setUser(data);
-      } catch (err) {}
+      } catch (err) {
+        // tu peux log si besoin
+      }
     };
 
     fetchUser();
@@ -63,7 +65,8 @@ const Header = () => {
     <header className="header">
       <div className="header-left">
         <Link to="/">
-          <img src={`${API.replace('/api', '')}/uploads/logo_barcapp.png`} alt="logo" />
+          {/* 🔥 Logo servi depuis le CDN Vercel (dossier public/uploads) */}
+          <img src="/uploads/logo_barcapp.png" alt="logo" className="logo" />
         </Link>
       </div>
 
@@ -82,7 +85,14 @@ const Header = () => {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleEnter}
           />
-          <button className="search-button" onClick={() => navigate(`/recherche?search=${encodeURIComponent(query.trim())}`)}>🔍</button>
+          <button
+            className="search-button"
+            onClick={() =>
+              navigate(`/recherche?search=${encodeURIComponent(query.trim())}`)
+            }
+          >
+            🔍
+          </button>
         </div>
       </div>
 
