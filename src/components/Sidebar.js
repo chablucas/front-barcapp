@@ -5,11 +5,11 @@ import './Sidebar.css';
 const Sidebar = () => {
   const location = useLocation();
 
-  // Récupération utilisateur connecté
+  // Récupération de l'utilisateur connecté
   const user = JSON.parse(localStorage.getItem("user"));
 
-  // Si pas connecté OU pas admin → on n'affiche pas la sidebar
-  if (!user || !user.isAdmin) {
+  // Si pas connecté ou pas admin → ne rien afficher
+  if (!user || user.role !== "admin") {
     return null;
   }
 
