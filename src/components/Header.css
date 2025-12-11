@@ -80,11 +80,11 @@
 .search-button {
   position: absolute;
   top: 50%;
-  right: 15px;
-  transform: translateY(-50%);
+  right: 12px;
+  transform: translateY(-45%);
   background: none;
   border: none;
-  font-size: 18px;
+  font-size: 20px;
   color: white;
   cursor: pointer;
   padding: 0;
