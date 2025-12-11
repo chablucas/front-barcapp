@@ -25,6 +25,7 @@
   gap: 15px;
 }
 
+/* Inputs, textarea, select */
 .add-video-form input,
 .add-video-form textarea,
 .add-video-form select {
@@ -35,6 +36,7 @@
   background-color: #fff;
   color: #000;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .add-video-form textarea {
@@ -42,18 +44,12 @@
   min-height: 100px;
 }
 
-.checkbox-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: none;
-  color: white;
+/* Label de la section */
+.select-label {
+  text-align: left;
   font-size: 16px;
-  padding: 0 5px;
-}
-
-.checkbox-label input {
-  margin-right: 8px;
+  font-weight: 600;
+  margin-top: 5px;
 }
 
 .add-video-button {
@@ -65,11 +61,12 @@
   padding: 14px;
   border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
 .add-video-button:hover {
   background-color: #8e0035;
+  transform: translateY(-1px);
 }
 
 .add-video-message {
