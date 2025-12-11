@@ -44,11 +44,13 @@ const AddVideo = () => {
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        throw new Error(data.message || 'Erreur lors de l’ajout');
+        // On affiche le message détaillé renvoyé par le backend si dispo
+        throw new Error(data.message || data.error || 'Erreur lors de l’ajout de la vidéo.');
       }
 
       setMessage('Vidéo ajoutée avec succès !');
 
+      // Reset du formulaire
       setForm({
         title: '',
         description: '',
@@ -56,7 +58,8 @@ const AddVideo = () => {
         videoUrl: ''
       });
     } catch (err) {
-      setMessage(err.message || 'Erreur réseau');
+      console.error('Erreur ajout vidéo :', err);
+      setMessage(err.message || 'Erreur réseau.');
     }
   };
 
@@ -65,7 +68,6 @@ const AddVideo = () => {
       <h2 className="add-video-title">🎥 Ajouter une vidéo</h2>
 
       <form className="add-video-form" onSubmit={handleSubmit}>
-        
         <input
           type="text"
           name="title"
@@ -91,24 +93,26 @@ const AddVideo = () => {
           onChange={handleChange}
         />
 
-        {/* SELECT SECTION */}
         <label className="select-label">Section :</label>
         <select
           name="competition"
-          className="select-input"
           value={form.competition}
           onChange={handleChange}
           required
         >
           <option value="">-- Choisir une section --</option>
+          <option value="Résumé de match">Résumé de match</option>
           <option value="LaLiga">LaLiga</option>
           <option value="Ligue des Champions">Ligue des Champions</option>
-          <option value="Coupe du Roi">Coupe du Roi</option>
-          <option value="Supercoupe d’Espagne">Supercoupe d’Espagne</option>
+          <option value="Highlights">Highlights</option>
           <option value="Avis Culers">Avis Culers</option>
+          <option value="Mercato">Mercato</option>
+          <option value="Conférence de presse">Conférence de presse</option>
         </select>
 
-        <button type="submit" className="add-video-button">Ajouter</button>
+        <button type="submit" className="add-video-button">
+          Ajouter
+        </button>
       </form>
 
       {message && <p className="add-video-message">{message}</p>}
