@@ -1,19 +1,17 @@
 .sidebar {
   width: 60px;
-  background-color: #A50044; /* Rouge Grana Barça */
+  background-color: #A50044;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px 0;
   gap: 30px;
-  height: 100vh;
+  min-height: calc(100vh - 70px);
+  align-self: stretch;
   position: sticky;
-  top: 0;
+  top: 70px;
   z-index: 10;
 }
-
-
-
 
 .sidebar a {
   font-size: 28px;
@@ -24,7 +22,7 @@
 
 .sidebar a:hover {
   transform: scale(1.2);
-  color: #FDB913; /* Jaune Barça */
+  color: #FDB913;
 }
 
 .sidebar .active {

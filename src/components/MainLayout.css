@@ -1,21 +1,19 @@
 .main-layout {
-  display: flex;
-  flex-direction: column;
   min-height: 100vh;
-  background-color: #004D98; /* Bleu Barça */
+  background-color: #004D98;
   color: white;
 }
 
 .main-body {
   display: flex;
-  flex: 1;
-  overflow: hidden;
+  align-items: stretch;
+  min-height: calc(100vh - 70px);
 }
 
 .main-content {
   flex: 1;
   padding: 20px;
-  overflow-y: auto;
+  min-height: calc(100vh - 70px);
 }
 
 @media (max-width: 768px) {
