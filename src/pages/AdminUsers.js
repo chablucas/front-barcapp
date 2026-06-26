@@ -1,120 +1,199 @@
 import React, { useEffect, useState } from 'react';
 
-const API = 'https://back-barcapp.onrender.com';
+const API = 'https://back-barcapp.onrender.com/api';
 
 const AdminUsers = () => {
-    const [users, setUsers] = useState([]);
-    const [error, setError] = useState('');
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState('');
 
-    useEffect(() => {
-        const fetchUsers = async () => {
-            try {
-                const res = await fetch(`${API}/user`, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
 
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.message || "Erreur");
+      const token = localStorage.getItem('token');
 
-                setUsers(data);
-            } catch (err) {
-                setError(err.message);
-            }
-        };
+      const res = await fetch(`${API}/users/admin/all`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-        fetchUsers();
-    }, []);
+      const data = await res.json();
 
-    const promoteUser = async (id) => {
-        try {
-            const res = await fetch(`${API}/user/${id}/promote`, {
-                method: 'PATCH',
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                }
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message);
-            setUsers(users.map(u => u._id === id ? data.user : u));
-        } catch (err) {
-            alert(err.message);
-        }
-    };
+      if (!res.ok) {
+        throw new Error(data.message || 'Erreur chargement utilisateurs');
+      }
 
-    const toggleBlock = async (id) => {
-        try {
-            const res = await fetch(`${API}/user/${id}/block`, {
-                method: 'PATCH',
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                }
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message);
-            setUsers(users.map(u => u._id === id ? data.user : u));
-        } catch (err) {
-            alert(err.message);
-        }
-    };
+      setUsers(data);
+    } catch (err) {
+      console.error(err.message);
+      setMessage(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const deleteUser = async (id) => {
-        if (!window.confirm("Confirmer la suppression de cet utilisateur ?")) return;
-        try {
-            const res = await fetch(`${API}/user/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                }
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message);
-            setUsers(users.filter(u => u._id !== id));
-        } catch (err) {
-            alert(err.message);
-        }
-    };
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
-    if (error) return <p>{error}</p>;
+  const toggleBlock = async (id) => {
+    try {
+      const token = localStorage.getItem('token');
 
+      const res = await fetch(`${API}/users/admin/${id}/block`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Erreur blocage');
+      }
+
+      setMessage(data.message);
+      fetchUsers();
+    } catch (err) {
+      setMessage(err.message);
+    }
+  };
+
+  const changeRole = async (id, role) => {
+    try {
+      const token = localStorage.getItem('token');
+
+      const res = await fetch(`${API}/users/admin/${id}/role`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ role }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Erreur rôle');
+      }
+
+      setMessage(data.message);
+      fetchUsers();
+    } catch (err) {
+      setMessage(err.message);
+    }
+  };
+
+  if (loading) {
     return (
-        <div>
-            <h2>Utilisateurs inscrits</h2>
-            <table border="1" cellPadding="10" style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                    <tr>
-                        <th>Nom</th>
-                        <th>Email</th>
-                        <th>Rôle</th>
-                        <th>Bloqué</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {users.map((user) => (
-                        <tr key={user._id}>
-                            <td>{user.username}</td>
-                            <td>{user.email}</td>
-                            <td>{user.role}</td>
-                            <td>{user.isBlocked ? 'Oui' : 'Non'}</td>
-                            <td>
-                                {user.role !== 'admin' && (
-                                    <button onClick={() => promoteUser(user._id)}>🆙 Promouvoir</button>
-                                )}
-                                <button onClick={() => toggleBlock(user._id)} style={{ marginLeft: 8 }}>
-                                    {user.isBlocked ? '✅ Débloquer' : '🚫 Bloquer'}
-                                </button>
-                                <button onClick={() => deleteUser(user._id)} style={{ marginLeft: 8 }}>
-                                    🗑 Supprimer
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
+      <p style={{ color: 'white', padding: '20px' }}>
+        Chargement des utilisateurs...
+      </p>
     );
+  }
+
+  return (
+    <div style={{ padding: '25px', color: 'white' }}>
+      <h1 style={{ color: '#FDB913', marginBottom: '10px' }}>
+        Gestion des utilisateurs
+      </h1>
+
+      <p style={{ color: '#ddd', marginBottom: '20px' }}>
+        Bloque les utilisateurs abusifs ou modifie les rôles.
+      </p>
+
+      {message && (
+        <p
+          style={{
+            backgroundColor: '#06397e',
+            padding: '12px',
+            borderRadius: '10px',
+            marginBottom: '20px',
+          }}
+        >
+          {message}
+        </p>
+      )}
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        {users.map((user) => (
+          <div
+            key={user._id}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '15px',
+              backgroundColor: '#071f49',
+              padding: '15px',
+              borderRadius: '14px',
+              border: user.isBlocked ? '2px solid #ff4d4d' : '1px solid #174a9c',
+            }}
+          >
+            <img
+              src={user.avatar || 'https://via.placeholder.com/50?text=👤'}
+              alt={user.username || user.email}
+              style={{
+                width: '55px',
+                height: '55px',
+                borderRadius: '50%',
+                objectFit: 'cover',
+                backgroundColor: 'white',
+              }}
+            />
+
+            <div style={{ flex: 1 }}>
+              <h3 style={{ margin: 0, color: '#FDB913' }}>
+                {user.username || 'Sans pseudo'}
+              </h3>
+
+              <p style={{ margin: '4px 0', color: '#ddd', fontSize: '14px' }}>
+                {user.email}
+              </p>
+
+              <p style={{ margin: 0, fontSize: '13px' }}>
+                Rôle : <strong>{user.role}</strong> | Statut :{' '}
+                <strong style={{ color: user.isBlocked ? '#ff4d4d' : '#5cff8d' }}>
+                  {user.isBlocked ? 'Bloqué' : 'Actif'}
+                </strong>
+              </p>
+            </div>
+
+            <select
+              value={user.role}
+              onChange={(e) => changeRole(user._id, e.target.value)}
+              style={{
+                padding: '8px',
+                borderRadius: '8px',
+                border: 'none',
+              }}
+            >
+              <option value="user">user</option>
+              <option value="admin">admin</option>
+            </select>
+
+            <button
+              onClick={() => toggleBlock(user._id)}
+              style={{
+                padding: '9px 13px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                backgroundColor: user.isBlocked ? '#5cff8d' : '#ff4d4d',
+                color: 'black',
+                fontWeight: 'bold',
+              }}
+            >
+              {user.isBlocked ? 'Débloquer' : 'Bloquer'}
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default AdminUsers;

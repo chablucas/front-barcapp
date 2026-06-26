@@ -27,6 +27,13 @@ const Sidebar = () => {
       >
         ⚙️
       </Link>
+
+      <Link
+        to="/admin/users"
+        className={location.pathname === '/admin/users' ? 'active' : ''}
+      >
+        👥
+      </Link>
     </nav>
   );
 };

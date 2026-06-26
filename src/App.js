@@ -15,6 +15,7 @@ import Shorts from './pages/Shorts';
 import Home from './pages/Home';
 import AdminWidgets from './pages/AdminWidgets';
 import Messages from './pages/Messages';
+import AdminUsers from './pages/AdminUsers';
 
 import './App.css';
 
@@ -38,6 +39,7 @@ function App() {
           <Route path="/shorts" element={<MainLayout><Shorts /></MainLayout>} />
           <Route path="/admin/widgets" element={<MainLayout><AdminWidgets /></MainLayout>} />
           <Route path="/messages" element={<MainLayout><Messages /></MainLayout>} />
+          <Route path="/admin/users" element={<MainLayout><AdminUsers /></MainLayout>} />
         </Routes>
       </div>
     </Router>
