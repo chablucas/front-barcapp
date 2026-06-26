@@ -207,6 +207,12 @@ const Profil = () => {
   if (loading) return <p>Chargement...</p>;
   if (error) return <p className="error">{error}</p>;
 
+  const handleSendMessage = () => {
+    if (!user?._id) return;
+
+    navigate(`/messages?user=${user._id}`);
+  };
+
   return (
     <div className="profil-page">
       <main className="profil-center">
@@ -276,7 +282,12 @@ const Profil = () => {
 
           <div className="profil-username">
             {isPublicProfile ? (
-              <h2>{user?.username}</h2>
+              <>
+                <h2>{user?.username}</h2>
+                <button onClick={handleSendMessage}>
+                  💬 Envoyer un message
+                </button>
+              </>            
             ) : !editName ? (
               <>
                 <h2>{user?.username}</h2>

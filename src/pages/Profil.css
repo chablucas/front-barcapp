@@ -1,4 +1,9 @@
 .profil-page {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.profil-page {
   display: flex;
   align-items: flex-start;
   gap: 24px;

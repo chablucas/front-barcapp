@@ -127,7 +127,7 @@ const VideoDetail = () => {
 
   const handleSendMessage = (authorId) => {
     setOpenCommentMenu(null);
-    navigate(`/messages/${authorId}`);
+    navigate(`/messages?user=${authorId}`);
   };
 
   if (!video) return <p>Chargement...</p>;
