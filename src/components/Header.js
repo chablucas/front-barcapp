@@ -6,9 +6,11 @@ const API = 'https://back-barcapp.onrender.com/api';
 
 const Header = () => {
   const navigate = useNavigate();
+
   const [user, setUser] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
+
   const menuRef = useRef();
 
   useEffect(() => {
@@ -18,17 +20,15 @@ const Header = () => {
 
       try {
         const res = await fetch(`${API}/users/me`, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
+
         const data = await res.json();
 
         if (res.ok) {
-          // ✅ On met le user dans le state
           setUser(data);
-          // ✅ On le sauvegarde aussi dans le localStorage pour la Sidebar
           localStorage.setItem('user', JSON.stringify(data));
         } else {
-          // Si le token n'est plus valide, on nettoie
           localStorage.removeItem('user');
         }
       } catch (err) {
@@ -45,29 +45,34 @@ const Header = () => {
         setIsOpen(false);
       }
     };
+
     document.addEventListener('mousedown', handleClickOutside);
+
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('user'); // ✅ on nettoie aussi le user ici
+    localStorage.removeItem('user');
     navigate('/');
     window.location.reload();
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (query.trim()) {
-        navigate(`/recherche?search=${encodeURIComponent(query.trim())}`);
-      }
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [query, navigate]);
+  const handleSearch = () => {
+    const cleanQuery = query.trim();
+
+    if (cleanQuery.length < 2) {
+      setQuery('');
+      return;
+    }
+
+    navigate(`/recherche?search=${encodeURIComponent(cleanQuery)}`);
+    setQuery('');
+  };
 
   const handleEnter = (e) => {
     if (e.key === 'Enter') {
-      navigate(`/recherche?search=${encodeURIComponent(query.trim())}`);
+      handleSearch();
     }
   };
 
@@ -95,11 +100,11 @@ const Header = () => {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleEnter}
           />
+
           <button
+            type="button"
             className="search-button"
-            onClick={() =>
-              navigate(`/recherche?search=${encodeURIComponent(query.trim())}`)
-            }
+            onClick={handleSearch}
           >
             🔍
           </button>
@@ -115,6 +120,7 @@ const Header = () => {
               className="profile-avatar"
               onClick={() => setIsOpen(!isOpen)}
             />
+
             {isOpen && (
               <div className="dropdown-menu">
                 <span className="dropdown-name">{user.username}</span>
