@@ -27,7 +27,6 @@ const VideoDetail = () => {
   const [message, setMessage] = useState('');
   const [likes, setLikes] = useState(0);
   const [dislikes, setDislikes] = useState(0);
-  const [isFavorite, setIsFavorite] = useState(false);
 
   const user = getTokenPayload();
 
@@ -44,15 +43,6 @@ const VideoDetail = () => {
         const commentsData = await commentsRes.json();
         setComments(Array.isArray(commentsData) ? commentsData : []);
 
-        if (user) {
-          const meRes = await fetch(`${API}/users/me`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          });
-          const meData = await meRes.json();
-          setIsFavorite(meData.favorites?.includes(id));
-        }
       } catch (err) {
         console.error(err);
         setMessage('Erreur lors du chargement');
@@ -102,20 +92,6 @@ const VideoDetail = () => {
     }
   };
 
-  const toggleFavorite = async () => {
-    try {
-      const res = await fetch(`${API}/users/favorites/${id}`, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      const data = await res.json();
-      setIsFavorite(data.favorites.includes(id));
-    } catch (err) {
-      setMessage('Erreur favoris');
-    }
-  };
 
   if (!video) return <p>Chargement...</p>;
 
@@ -150,9 +126,6 @@ const VideoDetail = () => {
             <button onClick={() => handleVote('like')}>👍 {likes}</button>
             <button onClick={() => handleVote('dislike')}>
               👎 {dislikes}
-            </button>
-            <button onClick={toggleFavorite}>
-              {isFavorite ? '⭐ Retirer des favoris' : '☆ Ajouter aux favoris'}
             </button>
           </div>
 
