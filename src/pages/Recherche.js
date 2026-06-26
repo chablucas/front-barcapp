@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 
 const API = 'https://back-barcapp.onrender.com/api';
 
 const Recherche = () => {
+  const navigate = useNavigate();
+
   const [videos, setVideos] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,7 +18,6 @@ const Recherche = () => {
       try {
         setLoading(true);
 
-        // Recherche vidéos
         const videosRes = await fetch(`${API}/videos`);
         const videosData = await videosRes.json();
 
@@ -33,7 +34,6 @@ const Recherche = () => {
           setVideos([]);
         }
 
-        // Recherche utilisateurs
         if (query.trim().length >= 2) {
           const token = localStorage.getItem('token');
 
@@ -57,7 +57,6 @@ const Recherche = () => {
         } else {
           setUsers([]);
         }
-
       } catch (err) {
         console.error('Erreur recherche :', err.message);
         setVideos([]);
@@ -69,6 +68,35 @@ const Recherche = () => {
 
     fetchResults();
   }, [query]);
+
+  const handleStartConversation = async (userId) => {
+    try {
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      const res = await fetch(`${API}/conversations/start/${userId}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Erreur création conversation');
+      }
+
+      navigate('/messages');
+    } catch (err) {
+      console.error('Erreur conversation :', err.message);
+      alert(err.message);
+    }
+  };
 
   if (loading) {
     return (
@@ -84,7 +112,6 @@ const Recherche = () => {
         Résultats pour : "{query}"
       </h2>
 
-      {/* Utilisateurs */}
       {users.length > 0 && (
         <div style={{ margin: '20px' }}>
           <h3 style={{ color: '#FDB913', marginBottom: '15px' }}>
@@ -127,6 +154,7 @@ const Recherche = () => {
                 </div>
 
                 <button
+                  onClick={() => handleStartConversation(user._id)}
                   style={{
                     padding: '8px 12px',
                     border: 'none',
@@ -137,7 +165,7 @@ const Recherche = () => {
                     cursor: 'pointer',
                   }}
                 >
-                  Envoyer un message
+                  💬 Message privé
                 </button>
               </div>
             ))}
@@ -145,7 +173,6 @@ const Recherche = () => {
         </div>
       )}
 
-      {/* Vidéos */}
       <h3 style={{ color: '#FDB913', margin: '20px' }}>
         Vidéos
       </h3>
