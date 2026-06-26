@@ -17,12 +17,39 @@ const postes = [
 ];
 
 const joueursBarca = [
-  'Marc-André ter Stegen', 'Joan García', 'Iñaki Peña', 'Wojciech Szczęsny',
-  'Jules Koundé', 'Ronald Araújo', 'Andreas Christensen', 'Alejandro Baldé',
-  'Pau Cubarsí', 'Íñigo Martínez', 'Héctor Fort',
-  'Frenkie de Jong', 'Pedri', 'Gavi', 'Fermín López', 'Marc Casadó', 'Dani Olmo',
-  'Lamine Yamal', 'Raphinha', 'Robert Lewandowski', 'Ferran Torres',
-  'Ansu Fati', 'Pau Víctor'
+  // Gardiens
+  'Joan García',
+  'Marc-André ter Stegen',
+  'Wojciech Szczęsny',
+
+  // Défenseurs
+  'Jules Koundé',
+  'Ronald Araújo',
+  'Pau Cubarsí',
+  'Íñigo Martínez',
+  'Andreas Christensen',
+  'Alejandro Baldé',
+  'Eric García',
+  'Héctor Fort',
+  'Gerard Martín',
+
+  // Milieux
+  'Frenkie de Jong',
+  'Pedri',
+  'Gavi',
+  'Marc Casadó',
+  'Marc Bernal',
+  'Fermín López',
+  'Dani Olmo',
+
+  // Attaquants
+  'Lamine Yamal',
+  'Raphinha',
+  'Robert Lewandowski',
+  'Ferran Torres',
+  'Roony Bardghji',
+  'Marcus Rashford',
+  'Gordon'
 ];
 
 const LineupPreview = ({ composition, setComposition }) => {
