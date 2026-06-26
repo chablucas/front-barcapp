@@ -13,17 +13,45 @@
   overflow-y: auto;
   padding-right: 10px;
   scrollbar-width: thin;
+  scrollbar-color: #FDB913 #06397e;
+}
+
+.home-widgets {
+  overflow-y: auto;
+  padding-right: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  scrollbar-width: thin;
+  scrollbar-color: #FDB913 #06397e;
 }
 
 .home-main::-webkit-scrollbar,
 .home-widgets::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
+}
+
+.home-main::-webkit-scrollbar-track,
+.home-widgets::-webkit-scrollbar-track {
+  background: #06397e;
+  border-radius: 20px;
 }
 
 .home-main::-webkit-scrollbar-thumb,
 .home-widgets::-webkit-scrollbar-thumb {
-  background: #FDB913;
-  border-radius: 10px;
+  background: linear-gradient(180deg, #FDB913 0%, #f4b000 40%, #d99700 100%);
+  border-radius: 20px;
+  border: 2px solid #06397e;
+}
+
+.home-main::-webkit-scrollbar-thumb:hover,
+.home-widgets::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ffd54d 0%, #FDB913 60%, #d99700 100%);
+}
+
+.home-main::-webkit-scrollbar-corner,
+.home-widgets::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 .home-hero {
@@ -127,15 +155,6 @@
   color: #111;
   font-weight: bold;
   opacity: 0.75;
-}
-
-.home-widgets {
-  overflow-y: auto;
-  padding-right: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  scrollbar-width: thin;
 }
 
 .home-widget {
