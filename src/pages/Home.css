@@ -2,12 +2,28 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) 340px;
   gap: 24px;
+  height: calc(100vh - 90px);
+  overflow: hidden;
   padding: 24px;
   color: white;
 }
 
 .home-main {
   min-width: 0;
+  overflow-y: auto;
+  padding-right: 10px;
+  scrollbar-width: thin;
+}
+
+.home-main::-webkit-scrollbar,
+.home-widgets::-webkit-scrollbar {
+  width: 8px;
+}
+
+.home-main::-webkit-scrollbar-thumb,
+.home-widgets::-webkit-scrollbar-thumb {
+  background: #FDB913;
+  border-radius: 10px;
 }
 
 .home-hero {
@@ -114,12 +130,12 @@
 }
 
 .home-widgets {
-  position: sticky;
-  top: 90px;
-  align-self: start;
+  overflow-y: auto;
+  padding-right: 8px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  scrollbar-width: thin;
 }
 
 .home-widget {
@@ -167,10 +183,14 @@
 @media (max-width: 1100px) {
   .home-page {
     grid-template-columns: 1fr;
+    height: auto;
+    overflow: visible;
   }
 
+  .home-main,
   .home-widgets {
-    position: static;
+    overflow-y: visible;
+    padding-right: 0;
   }
 }
 
