@@ -14,6 +14,7 @@ import GoogleCallback from './pages/GoogleCallback';
 import Shorts from './pages/Shorts';
 import Home from './pages/Home';
 import AdminWidgets from './pages/AdminWidgets';
+import Messages from './pages/Messages';
 
 import './App.css';
 
@@ -36,6 +37,7 @@ function App() {
           <Route path="/recherche" element={<MainLayout><Recherche /></MainLayout>} />
           <Route path="/shorts" element={<MainLayout><Shorts /></MainLayout>} />
           <Route path="/admin/widgets" element={<MainLayout><AdminWidgets /></MainLayout>} />
+          <Route path="/messages" element={<Messages />} />
         </Routes>
       </div>
     </Router>
