@@ -162,8 +162,18 @@ const Header = () => {
             {isOpen && (
               <div className="dropdown-menu">
                 <span className="dropdown-name">{user.username}</span>
-                <Link to="/profil">Mon profil</Link>
-                <button onClick={handleLogout}>Se déconnecter</button>
+                <Link to="/profil" onClick={() => setIsOpen(false)}>
+                  Mon profil
+                </Link>
+
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    handleLogout();
+                  }}
+                >
+                  Se déconnecter
+                </button>
               </div>
             )}
           </div>
