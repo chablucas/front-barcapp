@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import './Messages.css';
 
 const API = 'https://back-barcapp.onrender.com/api';
@@ -11,6 +12,7 @@ const Messages = () => {
   const [error, setError] = useState('');
 
   const token = localStorage.getItem('token');
+  const currentUser = JSON.parse(localStorage.getItem('user'));
 
   const fetchConversations = useCallback(async () => {
     if (!token) return;
@@ -36,8 +38,13 @@ const Messages = () => {
     fetchConversations();
   }, [fetchConversations]);
 
+  const getOtherUser = (conversation) => {
+    return conversation.participants?.find((p) => p._id !== currentUser?._id);
+  };
+
   const openConversation = async (conversation) => {
     setActiveConversation(conversation);
+    setError('');
 
     try {
       const res = await fetch(`${API}/conversations/${conversation._id}/messages`, {
@@ -60,6 +67,8 @@ const Messages = () => {
     if (!content.trim() || !activeConversation) return;
 
     try {
+      setError('');
+
       const res = await fetch(`${API}/conversations/${activeConversation._id}/messages`, {
         method: 'POST',
         headers: {
@@ -81,11 +90,6 @@ const Messages = () => {
     } catch (err) {
       setError(err.message);
     }
-  };
-
-  const getOtherUser = (conversation) => {
-    const currentUser = JSON.parse(localStorage.getItem('user'));
-    return conversation.participants?.find((p) => p._id !== currentUser?._id);
   };
 
   return (
@@ -133,12 +137,42 @@ const Messages = () => {
         ) : (
           <>
             <div className="messages-chat-header">
-              <h3>{getOtherUser(activeConversation)?.username}</h3>
+              {getOtherUser(activeConversation)?._id ? (
+                <Link
+                  to={`/profil/${getOtherUser(activeConversation)._id}`}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    textDecoration: 'none',
+                    color: '#FDB913',
+                  }}
+                >
+                  <img
+                    src={
+                      getOtherUser(activeConversation)?.avatar ||
+                      'https://via.placeholder.com/40'
+                    }
+                    alt={getOtherUser(activeConversation)?.username || 'Utilisateur'}
+                    style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                    }}
+                  />
+
+                  <h3 style={{ margin: 0 }}>
+                    {getOtherUser(activeConversation)?.username || 'Utilisateur'}
+                  </h3>
+                </Link>
+              ) : (
+                <h3>Utilisateur</h3>
+              )}
             </div>
 
             <div className="messages-list">
               {messages.map((message) => {
-                const currentUser = JSON.parse(localStorage.getItem('user'));
                 const isMine =
                   message.sender?._id === currentUser?._id ||
                   message.sender === currentUser?._id;

@@ -35,6 +35,7 @@ function App() {
           <Route path="/ajouter-video" element={<MainLayout><AddVideo /></MainLayout>} />
           <Route path="/video/:id" element={<MainLayout><VideoDetail /></MainLayout>} />
           <Route path="/profil" element={<MainLayout><Profil /></MainLayout>} />
+          <Route path="/profil/:id" element={<MainLayout><Profil /></MainLayout>} />
           <Route path="/recherche" element={<MainLayout><Recherche /></MainLayout>} />
           <Route path="/shorts" element={<MainLayout><Shorts /></MainLayout>} />
           <Route path="/admin/widgets" element={<MainLayout><AdminWidgets /></MainLayout>} />

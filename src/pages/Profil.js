@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import './Profil.css';
 import LineupDisplay from '../components/LineupDisplay';
 
@@ -8,6 +8,9 @@ const API = 'https://back-barcapp.onrender.com/api';
 
 const Profil = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  const isPublicProfile = Boolean(id);
 
   const [user, setUser] = useState(null);
   const [likedVideos, setLikedVideos] = useState([]);
@@ -33,23 +36,31 @@ const Profil = () => {
     const fetchData = async () => {
       const token = localStorage.getItem('token');
 
-      if (!token) {
+      if (!token && !isPublicProfile) {
         navigate('/login');
         return;
       }
 
       try {
-        const userRes = await fetch(`${API}/users/me`, {
-          headers: { Authorization: `Bearer ${token}` },
+        const userUrl = isPublicProfile
+          ? `${API}/users/${id}`
+          : `${API}/users/me`;
+
+        const userRes = await fetch(userUrl, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
 
-        if (userRes.status === 401) {
+        if (userRes.status === 401 && !isPublicProfile) {
           localStorage.removeItem('token');
           navigate('/login');
           return;
         }
 
         const userData = await userRes.json();
+
+        if (!userRes.ok) {
+          throw new Error(userData.message || 'Erreur chargement profil.');
+        }
 
         setUser(userData);
         setNewUsername(userData.username || '');
@@ -98,7 +109,7 @@ const Profil = () => {
 
     fetchData();
     fetchWidgets();
-  }, [navigate]);
+  }, [navigate, id, isPublicProfile]);
 
   const handleUpdateUsername = async () => {
     try {
@@ -218,51 +229,55 @@ const Profil = () => {
               className="profil-avatar"
             />
 
-            <div className="profil-buttons">
-              {!editAvatar ? (
-                <button onClick={() => setEditAvatar(true)}>🖼 Changer de photo</button>
-              ) : (
-                <>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      if (!e.target.files || !e.target.files[0]) return;
+            {!isPublicProfile && (
+              <div className="profil-buttons">
+                {!editAvatar ? (
+                  <button onClick={() => setEditAvatar(true)}>🖼 Changer de photo</button>
+                ) : (
+                  <>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        if (!e.target.files || !e.target.files[0]) return;
 
-                      const file = e.target.files[0];
+                        const file = e.target.files[0];
 
-                      setAvatarFile(file);
-                      setAvatarPreview(URL.createObjectURL(file));
-                    }}
-                  />
-                  <button onClick={handleUploadAvatar}>📤 Sauvegarder</button>
-                </>
-              )}
+                        setAvatarFile(file);
+                        setAvatarPreview(URL.createObjectURL(file));
+                      }}
+                    />
+                    <button onClick={handleUploadAvatar}>📤 Sauvegarder</button>
+                  </>
+                )}
 
-              {!editBanner ? (
-                <button onClick={() => setEditBanner(true)}>🎨 Changer la bannière</button>
-              ) : (
-                <>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      if (!e.target.files || !e.target.files[0]) return;
+                {!editBanner ? (
+                  <button onClick={() => setEditBanner(true)}>🎨 Changer la bannière</button>
+                ) : (
+                  <>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        if (!e.target.files || !e.target.files[0]) return;
 
-                      const file = e.target.files[0];
+                        const file = e.target.files[0];
 
-                      setBannerFile(file);
-                      setBannerPreview(URL.createObjectURL(file));
-                    }}
-                  />
-                  <button onClick={handleUploadBanner}>📤 Sauvegarder</button>
-                </>
-              )}
-            </div>
+                        setBannerFile(file);
+                        setBannerPreview(URL.createObjectURL(file));
+                      }}
+                    />
+                    <button onClick={handleUploadBanner}>📤 Sauvegarder</button>
+                  </>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="profil-username">
-            {!editName ? (
+            {isPublicProfile ? (
+              <h2>{user?.username}</h2>
+            ) : !editName ? (
               <>
                 <h2>{user?.username}</h2>
                 <button onClick={() => setEditName(true)}>✏️ Modifier</button>
@@ -288,7 +303,7 @@ const Profil = () => {
           ) : (
             likedVideos.map((video) => {
               const youtubeId = video.videoUrl?.includes('v=')
-                ? video.videoUrl.split('v=')[1]
+                ? video.videoUrl.split('v=')[1].split('&')[0]
                 : '';
 
               return (
