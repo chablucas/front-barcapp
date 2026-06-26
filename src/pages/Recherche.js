@@ -9,16 +9,11 @@ const Recherche = () => {
 
   const query = new URLSearchParams(location.search).get('search') || '';
 
-  const [searchInput, setSearchInput] = useState(query);
   const [videos, setVideos] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const hasQuery = query.trim().length >= 2;
-
-  useEffect(() => {
-    setSearchInput(query);
-  }, [query]);
 
   useEffect(() => {
     const fetchResults = async () => {
@@ -79,19 +74,6 @@ const Recherche = () => {
     fetchResults();
   }, [query, hasQuery]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const cleanSearch = searchInput.trim();
-
-    if (cleanSearch.length < 2) {
-      navigate('/recherche');
-      return;
-    }
-
-    navigate(`/recherche?search=${encodeURIComponent(cleanSearch)}`);
-  };
-
   const handleStartConversation = async (userId) => {
     try {
       const token = localStorage.getItem('token');
@@ -123,56 +105,15 @@ const Recherche = () => {
 
   return (
     <div className="videos-container">
-      <div style={{ margin: '20px', maxWidth: '700px' }}>
-        <h2 style={{ color: 'white', marginBottom: '15px' }}>
-          Recherche
-        </h2>
+      <h2 style={{ color: 'white', margin: '20px' }}>
+        Recherche
+      </h2>
 
-        <form
-          onSubmit={handleSubmit}
-          style={{
-            display: 'flex',
-            gap: '10px',
-            marginBottom: '20px',
-          }}
-        >
-          <input
-            type="text"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Rechercher une vidéo ou un utilisateur..."
-            style={{
-              flex: 1,
-              padding: '12px',
-              borderRadius: '10px',
-              border: 'none',
-              outline: 'none',
-              fontSize: '15px',
-            }}
-          />
-
-          <button
-            type="submit"
-            style={{
-              padding: '12px 18px',
-              border: 'none',
-              borderRadius: '10px',
-              backgroundColor: '#FDB913',
-              color: 'black',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-            }}
-          >
-            Rechercher
-          </button>
-        </form>
-
-        {!hasQuery && (
-          <p style={{ color: 'white' }}>
-            Tape au moins 2 caractères pour lancer une recherche.
-          </p>
-        )}
-      </div>
+      {!hasQuery && (
+        <p style={{ padding: '20px', color: 'white' }}>
+          Lance une recherche depuis la barre en haut.
+        </p>
+      )}
 
       {loading && (
         <p style={{ padding: '20px', color: 'white' }}>
@@ -192,7 +133,7 @@ const Recherche = () => {
                 Utilisateurs
               </h3>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '600px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '750px' }}>
                 {users.map((user) => (
                   <div
                     key={user._id}
@@ -222,6 +163,7 @@ const Recherche = () => {
                       <h4 style={{ margin: 0, color: '#FDB913' }}>
                         {user.username}
                       </h4>
+
                       <p style={{ margin: '4px 0 0', color: '#ddd', fontSize: '13px' }}>
                         {user.role === 'admin' ? 'Administrateur' : 'Utilisateur'}
                       </p>
@@ -280,7 +222,7 @@ const Recherche = () => {
                             alignItems: 'center',
                             justifyContent: 'center',
                             color: 'white',
-                            fontSize: '14px'
+                            fontSize: '14px',
                           }}
                         >
                           Miniature indisponible
