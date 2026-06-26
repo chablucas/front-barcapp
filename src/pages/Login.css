@@ -1,107 +1,122 @@
 .login-container {
-  background-color: #004D98; /* Bleu Barça */
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at top left, rgba(253, 185, 19, 0.35), transparent 28%),
+    linear-gradient(135deg, #004D98 0%, #003b78 45%, #A50044 100%);
 }
 
 .login-box {
-  background-color: white;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.2);
-  max-width: 400px;
   width: 100%;
+  max-width: 420px;
+  padding: 38px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.32);
   text-align: center;
+  animation: loginFade 0.35s ease;
 }
 
 .login-box h2 {
-  color: #A50044; /* Grana */
-  margin-bottom: 20px;
+  color: #A50044;
+  margin-bottom: 26px;
+  font-size: 28px;
+  font-weight: 900;
 }
 
 .login-box form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 14px;
 }
 
 .login-box input {
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 16px;
+  padding: 13px 15px;
+  border-radius: 12px;
+  border: 2px solid #e3e3e3;
+  font-size: 15px;
+  outline: none;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-box input:focus {
+  border-color: #FDB913;
+  box-shadow: 0 0 0 4px rgba(253, 185, 19, 0.25);
 }
 
 .login-box button {
-  background-color: #FDB913; /* Jaune Barça */
-  color: black;
+  background: linear-gradient(135deg, #FDB913, #f5a800);
+  color: #111;
   border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: bold;
+  padding: 13px;
+  border-radius: 999px;
+  font-weight: 900;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .login-box button:hover {
-  background-color: #e2a800;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(253, 185, 19, 0.35);
 }
 
 .register-link {
-  margin-top: 15px;
+  margin-top: 18px;
   font-size: 14px;
+  color: #333;
 }
 
 .register-link a {
   color: #A50044;
   text-decoration: none;
-  font-weight: bold;
+  font-weight: 900;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
 }
 
 .google-button {
-  margin-top: 15px;
-  padding: 10px 16px;
-  background-color: white;
-  color: #444;
-  border: 1px solid #ccc;
-  font-weight: bold;
-  border-radius: 8px;
+  margin-top: 16px;
+  width: 100%;
+  padding: 12px 16px;
+  background: #fff;
+  color: #333;
+  border: 2px solid #e5e5e5;
+  font-weight: 800;
+  border-radius: 999px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  transition: background-color 0.2s;
 }
 
 .google-button:hover {
-  background-color: #f2f2f2;
+  background-color: #f5f5f5;
+}
+
+@keyframes loginFade {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 600px) {
   .login-box {
-    padding: 25px;
-    margin: 20px;
+    padding: 28px 22px;
   }
 
   .login-box h2 {
-    font-size: 22px;
-  }
-
-  .login-box input {
-    padding: 10px;
-    font-size: 15px;
-  }
-
-  .login-box button,
-  .google-button {
-    font-size: 15px;
-    padding: 10px;
-  }
-
-  .register-link {
-    font-size: 13px;
+    font-size: 24px;
   }
 }
