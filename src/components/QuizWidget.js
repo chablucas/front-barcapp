@@ -5,6 +5,7 @@ const API = 'https://back-barcapp.onrender.com/api';
 
 const QuizWidget = () => {
   const [quiz, setQuiz] = useState(null);
+  const [leaderboard, setLeaderboard] = useState([]);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -12,11 +13,25 @@ const QuizWidget = () => {
 
   const token = localStorage.getItem('token');
 
+  const fetchLeaderboard = async () => {
+    try {
+      const res = await fetch(`${API}/quiz/leaderboard`);
+      const data = await res.json();
+
+      if (Array.isArray(data)) {
+        setLeaderboard(data);
+      }
+    } catch (err) {
+      console.error('Erreur classement quiz:', err);
+    }
+  };
+
   useEffect(() => {
     const fetchTodayQuiz = async () => {
       try {
         if (!token) {
           setLoading(false);
+          fetchLeaderboard();
           return;
         }
 
@@ -28,6 +43,8 @@ const QuizWidget = () => {
 
         const data = await res.json();
         setQuiz(data);
+
+        await fetchLeaderboard();
       } catch (err) {
         console.error('Erreur quiz:', err);
       } finally {
@@ -67,6 +84,7 @@ const QuizWidget = () => {
       }
 
       setResult(data);
+
       setQuiz((prev) => ({
         ...prev,
         alreadyAnswered: true,
@@ -74,6 +92,8 @@ const QuizWidget = () => {
         quizStreak: data.quizStreak,
         lastQuizCorrect: data.isCorrect,
       }));
+
+      await fetchLeaderboard();
     } catch (err) {
       console.error('Erreur validation quiz:', err);
       setResult({
@@ -85,11 +105,23 @@ const QuizWidget = () => {
     }
   };
 
+  const getMedal = (index) => {
+    if (index === 0) return '🥇';
+    if (index === 1) return '🥈';
+    return '🥉';
+  };
+
   if (!token) {
     return (
       <section className="quiz-widget">
-        <h2>🎮 Quiz Barça</h2>
-        <p>Connecte-toi pour répondre à la question du jour.</p>
+        <div className="quiz-layout">
+          <div>
+            <h2>🎮 Quiz Barça</h2>
+            <p>Connecte-toi pour répondre à la question du jour.</p>
+          </div>
+
+          <Leaderboard leaderboard={leaderboard} getMedal={getMedal} />
+        </div>
       </section>
     );
   }
@@ -106,85 +138,130 @@ const QuizWidget = () => {
   if (!quiz?.question) {
     return (
       <section className="quiz-widget">
-        <h2>🎮 Quiz Barça</h2>
-        <p>Aucune question disponible pour le moment.</p>
+        <div className="quiz-layout">
+          <div>
+            <h2>🎮 Quiz Barça</h2>
+            <p>Aucune question disponible pour le moment.</p>
+          </div>
+
+          <Leaderboard leaderboard={leaderboard} getMedal={getMedal} />
+        </div>
       </section>
     );
   }
 
   return (
     <section className="quiz-widget">
-      <div className="quiz-header">
-        <div>
-          <span className="quiz-badge">Question du jour</span>
-          <h2>🎮 Quiz Barça</h2>
-        </div>
+      <div className="quiz-layout">
+        <div className="quiz-left">
+          <div className="quiz-header">
+            <div>
+              <span className="quiz-badge">Question du jour</span>
+              <h2>🎮 Quiz Barça</h2>
+            </div>
 
-        <div className="quiz-score">
-          <span>{quiz.quizScore || 0}</span>
-          <small>points</small>
-        </div>
-      </div>
-
-      <div className="quiz-stats">
-        <span>🔥 Série : {quiz.quizStreak || 0}</span>
-        <span>📂 {quiz.question.category}</span>
-      </div>
-
-      <p className="quiz-question">{quiz.question.question}</p>
-
-      {quiz.alreadyAnswered ? (
-        <div className="quiz-result">
-          <p>
-            {quiz.lastQuizCorrect
-              ? '✅ Tu as déjà répondu correctement aujourd’hui.'
-              : '❌ Tu as déjà répondu aujourd’hui.'}
-          </p>
-          <small>Reviens demain pour une nouvelle question.</small>
-        </div>
-      ) : (
-        <>
-          <div className="quiz-buttons">
-            <button
-              type="button"
-              className={selectedAnswer === true ? 'active' : ''}
-              onClick={() => setSelectedAnswer(true)}
-            >
-              Vrai
-            </button>
-
-            <button
-              type="button"
-              className={selectedAnswer === false ? 'active' : ''}
-              onClick={() => setSelectedAnswer(false)}
-            >
-              Faux
-            </button>
+            <div className="quiz-score">
+              <span>{quiz.quizScore || 0}</span>
+              <small>points</small>
+            </div>
           </div>
 
-          <button
-            type="button"
-            className="quiz-submit"
-            onClick={handleSubmit}
-            disabled={selectedAnswer === null || sending}
-          >
-            {sending ? 'Validation...' : 'Valider'}
-          </button>
-        </>
-      )}
+          <div className="quiz-stats">
+            <span>🔥 Série : {quiz.quizStreak || 0}</span>
+            <span>📂 {quiz.question.category}</span>
+          </div>
 
-      {result && (
-        <div className={result.isCorrect ? 'quiz-feedback success' : 'quiz-feedback error'}>
-          <p>{result.message}</p>
+          <p className="quiz-question">{quiz.question.question}</p>
 
-          {!result.error && (
-            <small>
-              Score : {result.quizScore} point(s) — Série : {result.quizStreak}
-            </small>
+          {quiz.alreadyAnswered ? (
+            <div className="quiz-result">
+              <p>
+                {quiz.lastQuizCorrect
+                  ? '✅ Tu as déjà répondu correctement aujourd’hui.'
+                  : '❌ Tu as déjà répondu aujourd’hui.'}
+              </p>
+              <small>Reviens demain pour une nouvelle question.</small>
+            </div>
+          ) : (
+            <>
+              <div className="quiz-buttons">
+                <button
+                  type="button"
+                  className={selectedAnswer === true ? 'active' : ''}
+                  onClick={() => setSelectedAnswer(true)}
+                >
+                  Vrai
+                </button>
+
+                <button
+                  type="button"
+                  className={selectedAnswer === false ? 'active' : ''}
+                  onClick={() => setSelectedAnswer(false)}
+                >
+                  Faux
+                </button>
+              </div>
+
+              <button
+                type="button"
+                className="quiz-submit"
+                onClick={handleSubmit}
+                disabled={selectedAnswer === null || sending}
+              >
+                {sending ? 'Validation...' : 'Valider'}
+              </button>
+            </>
+          )}
+
+          {result && (
+            <div className={result.isCorrect ? 'quiz-feedback success' : 'quiz-feedback error'}>
+              <p>{result.message}</p>
+
+              {!result.error && (
+                <small>
+                  Score : {result.quizScore} point(s) — Série : {result.quizStreak}
+                </small>
+              )}
+            </div>
           )}
         </div>
-      )}
+
+        <Leaderboard leaderboard={leaderboard} getMedal={getMedal} />
+      </div>
     </section>
+  );
+};
+
+const Leaderboard = ({ leaderboard, getMedal }) => {
+  return (
+    <div className="quiz-leaderboard">
+      <h3>🏆 Top 3</h3>
+
+      {leaderboard.length === 0 ? (
+        <p className="quiz-empty-ranking">Aucun score pour le moment.</p>
+      ) : (
+        <div className="quiz-ranking-list">
+          {leaderboard.map((user, index) => (
+            <div className="quiz-ranking-item" key={user._id}>
+              <span className="quiz-medal">{getMedal(index)}</span>
+
+              <img
+                src={user.avatar || '/default-avatar.png'}
+                alt={user.username}
+                className="quiz-avatar"
+              />
+
+              <div>
+                <strong>{user.username}</strong>
+                <small>
+                  {user.quizScore} pts — série {user.quizStreak || 0}
+                </small>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 
