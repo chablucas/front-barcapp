@@ -83,6 +83,7 @@ const Header = () => {
         <div className="nav-buttons">
           <Link to="/videos" className="nav-button">Vidéos</Link>
           <Link to="/shorts" className="nav-button">Shorts</Link>
+          {user && <Link to="/messages" className="nav-button">Messages</Link>}
         </div>
 
         <div className="search-wrapper">
