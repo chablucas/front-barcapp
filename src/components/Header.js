@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Header.css';
 
@@ -10,8 +10,29 @@ const Header = () => {
   const [user, setUser] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const menuRef = useRef();
+
+  const fetchUnreadMessages = useCallback(async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+      const res = await fetch(`${API}/conversations`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = await res.json();
+
+      if (res.ok && Array.isArray(data)) {
+        const count = data.filter((conversation) => conversation.isUnread).length;
+        setUnreadCount(count);
+      }
+    } catch (err) {
+      console.error('Erreur notifications messages:', err.message);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -28,6 +49,7 @@ const Header = () => {
         if (res.ok) {
           setUser(data);
           localStorage.setItem('user', JSON.stringify(data));
+          fetchUnreadMessages();
         } else {
           localStorage.removeItem('user');
         }
@@ -37,7 +59,15 @@ const Header = () => {
     };
 
     fetchUser();
-  }, []);
+  }, [fetchUnreadMessages]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchUnreadMessages();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [fetchUnreadMessages]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -88,7 +118,15 @@ const Header = () => {
         <div className="nav-buttons">
           <Link to="/videos" className="nav-button">Vidéos</Link>
           <Link to="/shorts" className="nav-button">Shorts</Link>
-          {user && <Link to="/messages" className="nav-button">Messages</Link>}
+
+          {user && (
+            <Link to="/messages" className="nav-button messages-link">
+              Messages
+              {unreadCount > 0 && (
+                <span className="messages-badge">{unreadCount}</span>
+              )}
+            </Link>
+          )}
         </div>
 
         <div className="search-wrapper">
