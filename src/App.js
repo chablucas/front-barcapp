@@ -37,7 +37,7 @@ function App() {
           <Route path="/recherche" element={<MainLayout><Recherche /></MainLayout>} />
           <Route path="/shorts" element={<MainLayout><Shorts /></MainLayout>} />
           <Route path="/admin/widgets" element={<MainLayout><AdminWidgets /></MainLayout>} />
-          <Route path="/messages" element={<Messages />} />
+          <Route path="/messages" element={<MainLayout><Messages /></MainLayout>} />
         </Routes>
       </div>
     </Router>
