@@ -5,16 +5,30 @@ const API = 'https://back-barcapp.onrender.com/api';
 
 const Recherche = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
+  const query = new URLSearchParams(location.search).get('search') || '';
+
+  const [searchInput, setSearchInput] = useState(query);
   const [videos, setVideos] = useState([]);
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  const location = useLocation();
-  const query = new URLSearchParams(location.search).get('search') || '';
+  const hasQuery = query.trim().length >= 2;
+
+  useEffect(() => {
+    setSearchInput(query);
+  }, [query]);
 
   useEffect(() => {
     const fetchResults = async () => {
+      if (!hasQuery) {
+        setVideos([]);
+        setUsers([]);
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
 
@@ -34,23 +48,19 @@ const Recherche = () => {
           setVideos([]);
         }
 
-        if (query.trim().length >= 2) {
-          const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token');
 
-          if (token) {
-            const usersRes = await fetch(`${API}/users/search?q=${encodeURIComponent(query)}`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
+        if (token) {
+          const usersRes = await fetch(`${API}/users/search?q=${encodeURIComponent(query)}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
 
-            const usersData = await usersRes.json();
+          const usersData = await usersRes.json();
 
-            if (usersRes.ok && Array.isArray(usersData)) {
-              setUsers(usersData);
-            } else {
-              setUsers([]);
-            }
+          if (usersRes.ok && Array.isArray(usersData)) {
+            setUsers(usersData);
           } else {
             setUsers([]);
           }
@@ -67,7 +77,20 @@ const Recherche = () => {
     };
 
     fetchResults();
-  }, [query]);
+  }, [query, hasQuery]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const cleanSearch = searchInput.trim();
+
+    if (cleanSearch.length < 2) {
+      navigate('/recherche');
+      return;
+    }
+
+    navigate(`/recherche?search=${encodeURIComponent(cleanSearch)}`);
+  };
 
   const handleStartConversation = async (userId) => {
     try {
@@ -98,128 +121,181 @@ const Recherche = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <p style={{ padding: '20px', color: 'white' }}>
-        Recherche en cours...
-      </p>
-    );
-  }
-
   return (
     <div className="videos-container">
-      <h2 style={{ color: 'white', margin: '20px' }}>
-        Résultats pour : "{query}"
-      </h2>
+      <div style={{ margin: '20px', maxWidth: '700px' }}>
+        <h2 style={{ color: 'white', marginBottom: '15px' }}>
+          Recherche
+        </h2>
 
-      {users.length > 0 && (
-        <div style={{ margin: '20px' }}>
-          <h3 style={{ color: '#FDB913', marginBottom: '15px' }}>
-            Utilisateurs
-          </h3>
+        <form
+          onSubmit={handleSubmit}
+          style={{
+            display: 'flex',
+            gap: '10px',
+            marginBottom: '20px',
+          }}
+        >
+          <input
+            type="text"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Rechercher une vidéo ou un utilisateur..."
+            style={{
+              flex: 1,
+              padding: '12px',
+              borderRadius: '10px',
+              border: 'none',
+              outline: 'none',
+              fontSize: '15px',
+            }}
+          />
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '600px' }}>
-            {users.map((user) => (
-              <div
-                key={user._id}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  backgroundColor: '#06397e',
-                  padding: '12px',
-                  borderRadius: '12px',
-                }}
-              >
-                <img
-                  src={user.avatar || 'https://via.placeholder.com/50'}
-                  alt={user.username}
-                  style={{
-                    width: '52px',
-                    height: '52px',
-                    borderRadius: '50%',
-                    objectFit: 'cover',
-                    border: '3px solid #FDB913',
-                    backgroundColor: 'white',
-                  }}
-                />
+          <button
+            type="submit"
+            style={{
+              padding: '12px 18px',
+              border: 'none',
+              borderRadius: '10px',
+              backgroundColor: '#FDB913',
+              color: 'black',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+            }}
+          >
+            Rechercher
+          </button>
+        </form>
 
-                <div style={{ flex: 1 }}>
-                  <h4 style={{ margin: 0, color: '#FDB913' }}>
-                    {user.username}
-                  </h4>
-                  <p style={{ margin: '4px 0 0', color: '#ddd', fontSize: '13px' }}>
-                    {user.role === 'admin' ? 'Administrateur' : 'Utilisateur'}
-                  </p>
-                </div>
+        {!hasQuery && (
+          <p style={{ color: 'white' }}>
+            Tape au moins 2 caractères pour lancer une recherche.
+          </p>
+        )}
+      </div>
 
-                <button
-                  onClick={() => handleStartConversation(user._id)}
-                  style={{
-                    padding: '8px 12px',
-                    border: 'none',
-                    borderRadius: '8px',
-                    backgroundColor: '#FDB913',
-                    color: 'black',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                  }}
-                >
-                  💬 Message privé
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
+      {loading && (
+        <p style={{ padding: '20px', color: 'white' }}>
+          Recherche en cours...
+        </p>
       )}
 
-      <h3 style={{ color: '#FDB913', margin: '20px' }}>
-        Vidéos
-      </h3>
+      {!loading && hasQuery && (
+        <>
+          <h2 style={{ color: 'white', margin: '20px' }}>
+            Résultats pour : "{query}"
+          </h2>
 
-      {videos.length === 0 ? (
-        <p style={{ padding: '20px', color: 'white' }}>
-          Aucune vidéo trouvée.
-        </p>
-      ) : (
-        <div className="videos-grid">
-          {videos.map((video) => {
-            const youtubeId = video.videoUrl?.includes('v=')
-              ? video.videoUrl.split('v=')[1]
-              : '';
+          {users.length > 0 && (
+            <div style={{ margin: '20px' }}>
+              <h3 style={{ color: '#FDB913', marginBottom: '15px' }}>
+                Utilisateurs
+              </h3>
 
-            return (
-              <div className="video-card" key={video._id}>
-                <Link to={`/video/${video._id}`}>
-                  {youtubeId ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '600px' }}>
+                {users.map((user) => (
+                  <div
+                    key={user._id}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      backgroundColor: '#06397e',
+                      padding: '12px',
+                      borderRadius: '12px',
+                    }}
+                  >
                     <img
-                      src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
-                      alt={video.title}
-                    />
-                  ) : (
-                    <div
+                      src={user.avatar || 'https://via.placeholder.com/50'}
+                      alt={user.username}
                       style={{
-                        width: '320px',
-                        height: '180px',
-                        background: '#222',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'white',
-                        fontSize: '14px'
+                        width: '52px',
+                        height: '52px',
+                        borderRadius: '50%',
+                        objectFit: 'cover',
+                        border: '3px solid #FDB913',
+                        backgroundColor: 'white',
+                      }}
+                    />
+
+                    <div style={{ flex: 1 }}>
+                      <h4 style={{ margin: 0, color: '#FDB913' }}>
+                        {user.username}
+                      </h4>
+                      <p style={{ margin: '4px 0 0', color: '#ddd', fontSize: '13px' }}>
+                        {user.role === 'admin' ? 'Administrateur' : 'Utilisateur'}
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => handleStartConversation(user._id)}
+                      style={{
+                        padding: '8px 12px',
+                        border: 'none',
+                        borderRadius: '8px',
+                        backgroundColor: '#FDB913',
+                        color: 'black',
+                        fontWeight: 'bold',
+                        cursor: 'pointer',
                       }}
                     >
-                      Miniature indisponible
-                    </div>
-                  )}
-                </Link>
-
-                <h3>{video.title}</h3>
-                <p>{video.description}</p>
+                      💬 Message privé
+                    </button>
+                  </div>
+                ))}
               </div>
-            );
-          })}
-        </div>
+            </div>
+          )}
+
+          <h3 style={{ color: '#FDB913', margin: '20px' }}>
+            Vidéos
+          </h3>
+
+          {videos.length === 0 ? (
+            <p style={{ padding: '20px', color: 'white' }}>
+              Aucune vidéo trouvée.
+            </p>
+          ) : (
+            <div className="videos-grid">
+              {videos.map((video) => {
+                const youtubeId = video.videoUrl?.includes('v=')
+                  ? video.videoUrl.split('v=')[1].split('&')[0]
+                  : '';
+
+                return (
+                  <div className="video-card" key={video._id}>
+                    <Link to={`/video/${video._id}`}>
+                      {youtubeId ? (
+                        <img
+                          src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
+                          alt={video.title}
+                        />
+                      ) : (
+                        <div
+                          style={{
+                            width: '320px',
+                            height: '180px',
+                            background: '#222',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: 'white',
+                            fontSize: '14px'
+                          }}
+                        >
+                          Miniature indisponible
+                        </div>
+                      )}
+                    </Link>
+
+                    <h3>{video.title}</h3>
+                    <p>{video.description}</p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
