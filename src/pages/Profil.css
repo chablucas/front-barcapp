@@ -9,7 +9,7 @@
 }
 
 .profil-main {
-  flex: 2;
+  flex: 1;
   min-width: 0;
 }
 
@@ -65,7 +65,7 @@
   color: #111;
   cursor: pointer;
   font-weight: 800;
-  transition: .2s;
+  transition: 0.2s ease;
 }
 
 .profil-buttons button:hover,
@@ -105,8 +105,8 @@
   padding: 14px;
   margin-bottom: 22px;
   max-width: 640px;
-  box-shadow: 0 10px 24px rgba(0,0,0,.2);
-  transition: .2s;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+  transition: 0.2s ease;
 }
 
 .profil-video-card:hover {
@@ -147,8 +147,8 @@
 
 .profil-stats span,
 .profil-stats div {
-  background: rgba(253,185,19,.16);
-  border: 1px solid rgba(253,185,19,.35);
+  background: rgba(253, 185, 19, 0.16);
+  border: 1px solid rgba(253, 185, 19, 0.35);
   padding: 8px 12px;
   border-radius: 999px;
   color: white;
@@ -160,57 +160,54 @@
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 20px;
   position: sticky;
   top: 100px;
   height: fit-content;
 }
 
-/* ========================= */
-/* Widgets (même style Admin) */
-/* ========================= */
+/* Widgets style Home */
 
 .widget {
-  background: rgba(5, 22, 57, 0.9);
-  border: 1px solid rgba(253,185,19,.25);
-  border-radius: 20px;
-  padding: 22px;
-  box-shadow: 0 15px 35px rgba(0,0,0,.25);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 18px;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(8px);
 }
 
 .widget h4 {
+  margin-bottom: 14px;
   color: #FDB913;
-  margin-bottom: 16px;
-  font-size: 1.25rem;
-}
-
-.widget ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.widget ul li {
-  background: rgba(255,255,255,.1);
-  padding: 12px 14px;
-  border-radius: 12px;
-  border-left: 4px solid #FDB913;
-  font-weight: 600;
+  font-size: 18px;
 }
 
 .widget p {
-  background: rgba(255,255,255,.1);
-  padding: 12px 14px;
-  border-radius: 12px;
-  border-left: 4px solid #FDB913;
+  font-size: 14px;
   line-height: 1.5;
+  margin: 8px 0;
+  color: #f2f2f2;
+}
+
+.widget ul {
+  padding-left: 0;
   margin: 0;
 }
 
-/* ========================= */
+.widget ul li {
+  list-style: none;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #f2f2f2;
+  font-weight: 500;
+}
+
+.error {
+  color: #FDB913;
+  padding: 20px;
+}
 
 @media (max-width: 950px) {
   .profil-page {
@@ -241,5 +238,10 @@
 
   .profil-banner {
     height: 160px;
+  }
+
+  .profil-video-info {
+    flex-direction: column;
+    gap: 6px;
   }
 }
