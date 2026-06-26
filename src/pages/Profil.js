@@ -8,6 +8,7 @@ const API = 'https://back-barcapp.onrender.com/api';
 
 const Profil = () => {
   const navigate = useNavigate();
+
   const [user, setUser] = useState(null);
   const [likedVideos, setLikedVideos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,6 +32,7 @@ const Profil = () => {
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem('token');
+
       if (!token) {
         navigate('/login');
         return;
@@ -48,13 +50,15 @@ const Profil = () => {
         }
 
         const userData = await userRes.json();
+
         setUser(userData);
-        setNewUsername(userData.username);
+        setNewUsername(userData.username || '');
         setAvatarPreview(userData.avatar || '');
         setBannerPreview(userData.banner || '');
 
         const likesRes = await fetch(`${API}/users/${userData._id}/likes`);
         const likesData = await likesRes.json();
+
         setLikedVideos(Array.isArray(likesData) ? likesData : []);
       } catch (err) {
         setError(err.message);
@@ -68,7 +72,7 @@ const Profil = () => {
         const [matchRes, lineupRes, streakRes] = await Promise.all([
           fetch(`${API}/barca/match-live`),
           fetch(`${API}/barca/lineup`),
-          fetch(`${API}/barca/streak`)
+          fetch(`${API}/barca/streak`),
         ]);
 
         const matchData = await matchRes.json();
@@ -81,7 +85,11 @@ const Profil = () => {
 
         const postes = ['GK', 'RB', 'CB1', 'CB2', 'LB', 'CM1', 'CM2', 'CAM', 'RW', 'LW', 'ST'];
         const compo = {};
-        postes.forEach((poste, i) => (compo[poste] = lineupData.lineup[i] || ''));
+
+        postes.forEach((poste, i) => {
+          compo[poste] = lineupData.lineup?.[i] || '';
+        });
+
         setComposition(compo);
       } catch (err) {
         console.error('Erreur widgets:', err);
@@ -102,8 +110,13 @@ const Profil = () => {
         },
         body: JSON.stringify({ username: newUsername }),
       });
+
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Erreur lors de la mise à jour du pseudo.");
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Erreur lors de la mise à jour du pseudo.');
+      }
+
       setUser(data);
       setEditName(false);
       toast.success('✅ Pseudo mis à jour !');
@@ -114,21 +127,32 @@ const Profil = () => {
 
   const handleUploadAvatar = async () => {
     if (!avatarFile) return;
+
     const formData = new FormData();
     formData.append('avatar', avatarFile);
+
     try {
       const res = await fetch(`${API}/users/me/avatar`, {
         method: 'PATCH',
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
         body: formData,
       });
+
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Erreur lors de la mise à jour de l'avatar.");
-      
-      // 🔴 Ici la correction : on considère que l'API renvoie directement l'utilisateur
-      setUser(data);
-      setAvatarPreview(data.avatar || '');
+
+      if (!res.ok) {
+        throw new Error(data.message || "Erreur lors de la mise à jour de l'avatar.");
+      }
+
+      const updatedUser = data.user || data;
+
+      setUser(updatedUser);
+      setAvatarPreview(updatedUser.avatar || '');
+      setAvatarFile(null);
       setEditAvatar(false);
+
       toast.success('✅ Avatar mis à jour !');
     } catch (err) {
       toast.error('❌ ' + err.message);
@@ -137,21 +161,32 @@ const Profil = () => {
 
   const handleUploadBanner = async () => {
     if (!bannerFile) return;
+
     const formData = new FormData();
     formData.append('banner', bannerFile);
+
     try {
       const res = await fetch(`${API}/users/me/banner`, {
         method: 'PATCH',
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
         body: formData,
       });
+
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Erreur lors de la mise à jour de la bannière.');
-      
-      // 🔴 Même correction ici
-      setUser(data);
-      setBannerPreview(data.banner || '');
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Erreur lors de la mise à jour de la bannière.');
+      }
+
+      const updatedUser = data.user || data;
+
+      setUser(updatedUser);
+      setBannerPreview(updatedUser.banner || '');
+      setBannerFile(null);
       setEditBanner(false);
+
       toast.success('✅ Bannière mise à jour !');
     } catch (err) {
       toast.error('❌ ' + err.message);
@@ -164,7 +199,6 @@ const Profil = () => {
   return (
     <div className="profil-page">
       <div className="profil-center">
-        {/* Header utilisateur + bannière */}
         <div className="profil-header">
           <div
             className="profil-banner"
@@ -176,12 +210,14 @@ const Profil = () => {
               borderRadius: '12px',
             }}
           />
+
           <div className="profil-avatar-bar">
             <img
               src={avatarPreview || 'https://via.placeholder.com/100'}
               alt="avatar"
               className="profil-avatar"
             />
+
             <div className="profil-buttons">
               {!editAvatar ? (
                 <button onClick={() => setEditAvatar(true)}>🖼 Changer de photo</button>
@@ -192,7 +228,9 @@ const Profil = () => {
                     accept="image/*"
                     onChange={(e) => {
                       if (!e.target.files || !e.target.files[0]) return;
+
                       const file = e.target.files[0];
+
                       setAvatarFile(file);
                       setAvatarPreview(URL.createObjectURL(file));
                     }}
@@ -200,6 +238,7 @@ const Profil = () => {
                   <button onClick={handleUploadAvatar}>📤 Sauvegarder</button>
                 </>
               )}
+
               {!editBanner ? (
                 <button onClick={() => setEditBanner(true)}>🎨 Changer la bannière</button>
               ) : (
@@ -209,7 +248,9 @@ const Profil = () => {
                     accept="image/*"
                     onChange={(e) => {
                       if (!e.target.files || !e.target.files[0]) return;
+
                       const file = e.target.files[0];
+
                       setBannerFile(file);
                       setBannerPreview(URL.createObjectURL(file));
                     }}
@@ -219,10 +260,11 @@ const Profil = () => {
               )}
             </div>
           </div>
+
           <div className="profil-username">
             {!editName ? (
               <>
-                <h2>{user.username}</h2>
+                <h2>{user?.username}</h2>
                 <button onClick={() => setEditName(true)}>✏️ Modifier</button>
               </>
             ) : (
@@ -238,9 +280,9 @@ const Profil = () => {
           </div>
         </div>
 
-        {/* Vidéos likées */}
         <div className="profil-feed">
           <h3>👍 Vidéos Likées</h3>
+
           {likedVideos.length === 0 ? (
             <p>Aucune vidéo likée.</p>
           ) : (
@@ -248,6 +290,7 @@ const Profil = () => {
               const youtubeId = video.videoUrl?.includes('v=')
                 ? video.videoUrl.split('v=')[1]
                 : '';
+
               return (
                 <div className="profil-video-card" key={video._id}>
                   <Link to={`/video/${video._id}`}>
@@ -256,14 +299,17 @@ const Profil = () => {
                       alt={video.title}
                     />
                   </Link>
+
                   <div className="profil-video-info">
                     <span className="badge">{video.competition}</span>
                     <span className="date">
                       {new Date(video.createdAt).toLocaleDateString('fr-FR')}
                     </span>
                   </div>
+
                   <h3>{video.title}</h3>
                   <p>{video.description}</p>
+
                   <div className="profil-stats">
                     <span>👍 {video.likesCount}</span>
                     <span>👎 {video.dislikesCount}</span>
@@ -276,10 +322,10 @@ const Profil = () => {
         </div>
       </div>
 
-      {/* Widgets */}
       <div className="profil-widgets">
         <div className="widget">
           <h4>📅 Prochain match</h4>
+
           {matchLive ? (
             <>
               <p>{matchLive.homeTeam} vs {matchLive.awayTeam}</p>
