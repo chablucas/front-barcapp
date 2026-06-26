@@ -209,7 +209,7 @@ const Profil = () => {
 
   return (
     <div className="profil-page">
-      <div className="profil-center">
+      <main className="profil-center">
         <div className="profil-header">
           <div
             className="profil-banner"
@@ -335,9 +335,9 @@ const Profil = () => {
             })
           )}
         </div>
-      </div>
+      </main>
 
-      <div className="profil-widgets">
+      <aside className="profil-widgets">
         <div className="widget">
           <h4>📅 Prochain match</h4>
 
@@ -366,7 +366,7 @@ const Profil = () => {
             ))}
           </ul>
         </div>
-      </div>
+      </aside>
     </div>
   );
 };
