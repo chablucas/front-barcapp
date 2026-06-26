@@ -1,0 +1,136 @@
+.quiz-widget {
+  background: linear-gradient(135deg, #111827, #1e1b4b);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 22px;
+  color: white;
+  margin-bottom: 30px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
+}
+
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.quiz-badge {
+  display: inline-block;
+  background: rgba(59, 130, 246, 0.18);
+  color: #93c5fd;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  margin-bottom: 8px;
+}
+
+.quiz-header h2 {
+  margin: 0;
+}
+
+.quiz-score {
+  min-width: 78px;
+  height: 78px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  line-height: 1;
+}
+
+.quiz-score span {
+  font-size: 1.7rem;
+  font-weight: 800;
+}
+
+.quiz-score small {
+  margin-top: 6px;
+  color: #cbd5e1;
+}
+
+.quiz-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.quiz-stats span {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 7px 10px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+}
+
+.quiz-question {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  margin: 18px 0;
+  color: #f8fafc;
+}
+
+.quiz-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.quiz-buttons button,
+.quiz-submit {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 18px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.quiz-buttons button {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  flex: 1;
+}
+
+.quiz-buttons button.active {
+  background: #2563eb;
+}
+
+.quiz-submit {
+  width: 100%;
+  background: #dc2626;
+  color: white;
+}
+
+.quiz-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.quiz-result,
+.quiz-feedback {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.quiz-result p,
+.quiz-feedback p {
+  margin: 0 0 6px;
+}
+
+.quiz-result small,
+.quiz-feedback small {
+  color: #cbd5e1;
+}
+
+.quiz-feedback.success {
+  border: 1px solid rgba(34, 197, 94, 0.5);
+}
+
+.quiz-feedback.error {
+  border: 1px solid rgba(239, 68, 68, 0.5);
+}

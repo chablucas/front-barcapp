@@ -3,6 +3,7 @@ import './Videos.css';
 import './Home.css';
 import VideoCard from '../components/VideoCard';
 import LineupDisplay from '../components/LineupDisplay';
+import QuizWidget from '../components/QuizWidget';
 
 const API = 'https://back-barcapp.onrender.com/api';
 
@@ -118,14 +119,7 @@ const Home = () => {
           </div>
         </section>
 
-        <section className="home-game-widget">
-          <h2>🎮 Mini-jeu Barça</h2>
-          <p>
-            Prochainement : un petit widget interactif pour tester tes connaissances
-            ou tenter de marquer le plus de points possible.
-          </p>
-          <button disabled>Disponible bientôt</button>
-        </section>
+        <QuizWidget />
 
         <section>
           <h2>🏆 Les plus likées</h2>
