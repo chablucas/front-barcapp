@@ -1,20 +1,54 @@
 .profil-page {
-  width: 100%;
-  min-height: calc(100vh - 70px);
-  box-sizing: border-box;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: 28px;
-  padding: 28px;
-  background: linear-gradient(135deg, #004D98 0%, #003b78 55%, #001f4d 100%);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 24px;
+  height: calc(100vh - 90px);
+  overflow: hidden;
+  padding: 24px;
   color: white;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, #004D98 0%, #003b78 55%, #001f4d 100%);
 }
 
 .profil-main {
-  flex: 1 1 auto;
   min-width: 0;
-  max-width: none;
+  overflow-y: auto;
+  padding-right: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: #FDB913 #06397e;
+}
+
+.profil-widgets {
+  overflow-y: auto;
+  padding-right: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  scrollbar-width: thin;
+  scrollbar-color: #FDB913 #06397e;
+}
+
+.profil-main::-webkit-scrollbar,
+.profil-widgets::-webkit-scrollbar {
+  width: 10px;
+}
+
+.profil-main::-webkit-scrollbar-track,
+.profil-widgets::-webkit-scrollbar-track {
+  background: #06397e;
+  border-radius: 20px;
+}
+
+.profil-main::-webkit-scrollbar-thumb,
+.profil-widgets::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #FDB913 0%, #f4b000 40%, #d99700 100%);
+  border-radius: 20px;
+  border: 2px solid #06397e;
+}
+
+.profil-main::-webkit-scrollbar-thumb:hover,
+.profil-widgets::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ffd54d 0%, #FDB913 60%, #d99700 100%);
 }
 
 .profil-header {
@@ -166,29 +200,17 @@
   font-size: 14px;
 }
 
-.profil-widgets {
-  width: 450px;
-  flex-shrink: 0 0 450px;
-  margin-left: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  position: sticky;
-  top: 100px;
-  height: fit-content;
-}
-
 .widget {
-  background: rgba(255, 255, 255, 0.08);
+  background-color: #071f49;
   border-radius: 18px;
   padding: 18px;
   color: white;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid #174a9c;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
-  backdrop-filter: blur(8px);
 }
 
 .widget h4 {
+  margin-top: 0;
   margin-bottom: 14px;
   color: #FDB913;
   font-size: 18px;
@@ -202,12 +224,11 @@
 }
 
 .widget ul {
-  padding-left: 0;
+  padding-left: 18px;
   margin: 0;
 }
 
 .widget ul li {
-  list-style: none;
   margin-bottom: 8px;
   font-size: 14px;
   color: #f2f2f2;
@@ -219,25 +240,25 @@
   padding: 20px;
 }
 
-@media (max-width: 950px) {
+@media (max-width: 1100px) {
   .profil-page {
-    flex-direction: column;
-    padding: 18px;
+    grid-template-columns: 1fr;
+    height: auto;
+    overflow: visible;
   }
 
-  .profil-main {
-    width: 100%;
-    max-width: none;
-  }
-
+  .profil-main,
   .profil-widgets {
-    width: 100%;
-    position: static;
-    margin-left: 0;
+    overflow-y: visible;
+    padding-right: 0;
   }
 }
 
 @media (max-width: 600px) {
+  .profil-page {
+    padding: 16px;
+  }
+
   .profil-avatar-bar {
     flex-direction: column;
     align-items: center;
