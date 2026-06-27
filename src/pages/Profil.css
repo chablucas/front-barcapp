@@ -4,7 +4,7 @@
   box-sizing: border-box;
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 28px;
   padding: 28px;
   background: linear-gradient(135deg, #004D98 0%, #003b78 55%, #001f4d 100%);
@@ -12,9 +12,9 @@
 }
 
 .profil-main {
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
-  max-width: calc(100% - 388px);
+  max-width: none;
 }
 
 .profil-header {
@@ -167,9 +167,9 @@
 }
 
 .profil-widgets {
-  width: 360px;
-  flex-shrink: 0;
-  margin-left: auto;
+  width: 450px;
+  flex-shrink: 0 0 450px;
+  margin-left: 0;
   display: flex;
   flex-direction: column;
   gap: 20px;
