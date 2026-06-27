@@ -1,3 +1,9 @@
+*,
+*::before,
+*::after{
+    box-sizing:border-box;
+}
+
 .admin-widgets {
   padding: 28px;
   color: #fff;
@@ -37,11 +43,13 @@
 .admin-widgets input[type="text"],
 .admin-widgets textarea {
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   padding: 13px 15px;
   margin: 10px 0;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255,255,255,.15);
+  background: rgba(255,255,255,.95);
   color: #0f172a;
   font-size: 15px;
   outline: none;

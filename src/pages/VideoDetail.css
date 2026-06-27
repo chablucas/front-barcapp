@@ -1,3 +1,9 @@
+*,
+*::before,
+*::after{
+    box-sizing:border-box;
+}
+
 .video-detail-page {
   padding: 36px 44px;
   color: #ffffff;
@@ -96,8 +102,12 @@
 
 .comment-form textarea {
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: block;
+
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255,255,255,.15);
   padding: 14px;
   resize: vertical;
   min-height: 90px;
