@@ -204,27 +204,50 @@ const Profil = () => {
     }
   };
 
+  const handleSendMessage = async () => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    if (!user?._id) {
+      toast.error('Utilisateur introuvable.');
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API}/conversations/start/${user._id}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const conversation = await res.json();
+
+      if (!res.ok) {
+        throw new Error(conversation.message || 'Erreur création conversation.');
+      }
+
+      navigate(`/messages?conversationId=${conversation._id}`);
+    } catch (err) {
+      toast.error('❌ ' + err.message);
+    }
+  };
+
   if (loading) return <p>Chargement...</p>;
   if (error) return <p className="error">{error}</p>;
 
-  const handleSendMessage = () => {
-    if (!user?._id) return;
-
-    navigate(`/messages?user=${user._id}`);
-  };
-
   return (
     <div className="profil-page">
-      <main className="profil-center">
+      <main className="profil-main">
         <div className="profil-header">
           <div
             className="profil-banner"
             style={{
               backgroundImage: bannerPreview ? `url(${bannerPreview})` : 'none',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              height: '180px',
-              borderRadius: '12px',
             }}
           />
 
@@ -245,9 +268,8 @@ const Profil = () => {
                       type="file"
                       accept="image/*"
                       onChange={(e) => {
-                        if (!e.target.files || !e.target.files[0]) return;
-
-                        const file = e.target.files[0];
+                        const file = e.target.files?.[0];
+                        if (!file) return;
 
                         setAvatarFile(file);
                         setAvatarPreview(URL.createObjectURL(file));
@@ -265,9 +287,8 @@ const Profil = () => {
                       type="file"
                       accept="image/*"
                       onChange={(e) => {
-                        if (!e.target.files || !e.target.files[0]) return;
-
-                        const file = e.target.files[0];
+                        const file = e.target.files?.[0];
+                        if (!file) return;
 
                         setBannerFile(file);
                         setBannerPreview(URL.createObjectURL(file));
@@ -284,10 +305,10 @@ const Profil = () => {
             {isPublicProfile ? (
               <>
                 <h2>{user?.username}</h2>
-                <button onClick={handleSendMessage}>
+                <button type="button" onClick={handleSendMessage}>
                   💬 Envoyer un message
                 </button>
-              </>            
+              </>
             ) : !editName ? (
               <>
                 <h2>{user?.username}</h2>

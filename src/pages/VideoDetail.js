@@ -1,210 +1,137 @@
-import React, { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import './Profil.css';
-import LineupDisplay from '../components/LineupDisplay';
+import './VideoDetail.css';
 
 const API = 'https://back-barcapp.onrender.com/api';
 
-const Profil = () => {
-  const navigate = useNavigate();
+const extractYouTubeID = (url) => {
+  const match = url?.match(/v=([^&]+)/);
+  return match ? match[1] : null;
+};
+
+const getTokenPayload = () => {
+  const token = localStorage.getItem('token');
+  if (!token) return null;
+
+  try {
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch {
+    return null;
+  }
+};
+
+const VideoDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const menuRef = useRef(null);
 
-  const isPublicProfile = Boolean(id);
+  const [video, setVideo] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState('');
+  const [message, setMessage] = useState('');
+  const [likes, setLikes] = useState(0);
+  const [dislikes, setDislikes] = useState(0);
+  const [openCommentMenu, setOpenCommentMenu] = useState(null);
 
-  const [user, setUser] = useState(null);
-  const [likedVideos, setLikedVideos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  const [editName, setEditName] = useState(false);
-  const [editAvatar, setEditAvatar] = useState(false);
-  const [editBanner, setEditBanner] = useState(false);
-
-  const [newUsername, setNewUsername] = useState('');
-  const [avatarFile, setAvatarFile] = useState(null);
-  const [avatarPreview, setAvatarPreview] = useState('');
-  const [bannerFile, setBannerFile] = useState(null);
-  const [bannerPreview, setBannerPreview] = useState('');
-
-  const [matchLive, setMatchLive] = useState(null);
-  const [, setLineup] = useState([]);
-  const [streak, setStreak] = useState([]);
-  const [composition, setComposition] = useState({});
+  const user = getTokenPayload();
 
   useEffect(() => {
     const fetchData = async () => {
-      const token = localStorage.getItem('token');
-
-      if (!token && !isPublicProfile) {
-        navigate('/login');
-        return;
-      }
-
       try {
-        const userUrl = isPublicProfile
-          ? `${API}/users/${id}`
-          : `${API}/users/me`;
+        const videoRes = await fetch(`${API}/videos/${id}`);
+        const videoData = await videoRes.json();
 
-        const userRes = await fetch(userUrl, {
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-        });
+        setVideo(videoData);
+        setLikes(videoData.likesCount || videoData.likes?.length || 0);
+        setDislikes(videoData.dislikesCount || videoData.dislikes?.length || 0);
 
-        if (userRes.status === 401 && !isPublicProfile) {
-          localStorage.removeItem('token');
-          navigate('/login');
-          return;
-        }
+        const commentsRes = await fetch(`${API}/comments/${id}`);
+        const commentsData = await commentsRes.json();
 
-        const userData = await userRes.json();
-
-        if (!userRes.ok) {
-          throw new Error(userData.message || 'Erreur chargement profil.');
-        }
-
-        setUser(userData);
-        setNewUsername(userData.username || '');
-        setAvatarPreview(userData.avatar || '');
-        setBannerPreview(userData.banner || '');
-
-        const likesRes = await fetch(`${API}/users/${userData._id}/likes`);
-        const likesData = await likesRes.json();
-
-        setLikedVideos(Array.isArray(likesData) ? likesData : []);
+        setComments(Array.isArray(commentsData) ? commentsData : []);
       } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const fetchWidgets = async () => {
-      try {
-        const [matchRes, lineupRes, streakRes] = await Promise.all([
-          fetch(`${API}/barca/match-live`),
-          fetch(`${API}/barca/lineup`),
-          fetch(`${API}/barca/streak`),
-        ]);
-
-        const matchData = await matchRes.json();
-        const lineupData = await lineupRes.json();
-        const streakData = await streakRes.json();
-
-        setMatchLive(matchData);
-        setLineup(lineupData.lineup || []);
-        setStreak(streakData.streak || []);
-
-        const postes = ['GK', 'RB', 'CB1', 'CB2', 'LB', 'CM1', 'CM2', 'CAM', 'RW', 'LW', 'ST'];
-        const compo = {};
-
-        postes.forEach((poste, i) => {
-          compo[poste] = lineupData.lineup?.[i] || '';
-        });
-
-        setComposition(compo);
-      } catch (err) {
-        console.error('Erreur widgets:', err);
+        console.error(err);
+        setMessage('Erreur lors du chargement');
       }
     };
 
     fetchData();
-    fetchWidgets();
-  }, [navigate, id, isPublicProfile]);
+  }, [id]);
 
-  const handleUpdateUsername = async () => {
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setOpenCommentMenu(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleVote = async (type) => {
     try {
-      const res = await fetch(`${API}/users/me`, {
+      const res = await fetch(`${API}/videos/${id}/${type}`, {
         method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      const data = await res.json();
+
+      setLikes(data.likes);
+      setDislikes(data.dislikes);
+    } catch (err) {
+      console.error(err);
+      setMessage('Erreur vote');
+    }
+  };
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!newComment.trim()) return;
+
+    try {
+      const res = await fetch(`${API}/comments`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-        body: JSON.stringify({ username: newUsername }),
+        body: JSON.stringify({
+          content: newComment,
+          videoId: id,
+        }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || 'Erreur lors de la mise à jour du pseudo.');
+        throw new Error(data.message || 'Erreur commentaire');
       }
 
-      setUser(data);
-      setEditName(false);
-      toast.success('✅ Pseudo mis à jour !');
+      setComments([...comments, data.comment]);
+      setNewComment('');
     } catch (err) {
-      toast.error('❌ ' + err.message);
+      console.error(err);
+      setMessage('Erreur commentaire');
     }
   };
 
-  const handleUploadAvatar = async () => {
-    if (!avatarFile) return;
+  const handleGoToProfile = (authorId) => {
+    setOpenCommentMenu(null);
 
-    const formData = new FormData();
-    formData.append('avatar', avatarFile);
+    if (!authorId) return;
 
-    try {
-      const res = await fetch(`${API}/users/me/avatar`, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Erreur lors de la mise à jour de l'avatar.");
-      }
-
-      const updatedUser = data.user || data;
-
-      setUser(updatedUser);
-      setAvatarPreview(updatedUser.avatar || '');
-      setAvatarFile(null);
-      setEditAvatar(false);
-
-      toast.success('✅ Avatar mis à jour !');
-    } catch (err) {
-      toast.error('❌ ' + err.message);
-    }
+    navigate(`/profil/${authorId}`);
   };
 
-  const handleUploadBanner = async () => {
-    if (!bannerFile) return;
+  const handleSendMessage = async (authorId) => {
+    setOpenCommentMenu(null);
 
-    const formData = new FormData();
-    formData.append('banner', bannerFile);
-
-    try {
-      const res = await fetch(`${API}/users/me/banner`, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || 'Erreur lors de la mise à jour de la bannière.');
-      }
-
-      const updatedUser = data.user || data;
-
-      setUser(updatedUser);
-      setBannerPreview(updatedUser.banner || '');
-      setBannerFile(null);
-      setEditBanner(false);
-
-      toast.success('✅ Bannière mise à jour !');
-    } catch (err) {
-      toast.error('❌ ' + err.message);
-    }
-  };
-
-  const handleSendMessage = async () => {
     const token = localStorage.getItem('token');
 
     if (!token) {
@@ -212,195 +139,179 @@ const Profil = () => {
       return;
     }
 
-    if (!user?._id) {
-      toast.error('Utilisateur introuvable.');
+    if (!authorId) {
+      setMessage('Utilisateur introuvable.');
       return;
     }
 
     try {
-      const res = await fetch(`${API}/conversations/start/${user._id}`, {
+      const res = await fetch(`${API}/conversations/start/${authorId}`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      const conversation = await res.json();
+      const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(conversation.message || 'Erreur création conversation.');
+        throw new Error(data.message || 'Erreur création conversation');
       }
 
-      navigate(`/messages?conversationId=${conversation._id}`);
+      navigate(`/messages?conversation=${data._id}`);
     } catch (err) {
-      toast.error('❌ ' + err.message);
+      console.error(err);
+      setMessage(err.message || 'Erreur lors de l’ouverture de la conversation.');
     }
   };
 
-  if (loading) return <p>Chargement...</p>;
-  if (error) return <p className="error">{error}</p>;
+  if (!video) return <p>Chargement...</p>;
+
+  const videoId = extractYouTubeID(video.videoUrl);
 
   return (
-    <div className="profil-page">
-      <main className="profil-main">
-        <div className="profil-header">
-          <div
-            className="profil-banner"
-            style={{
-              backgroundImage: bannerPreview ? `url(${bannerPreview})` : 'none',
-            }}
-          />
+    <div className="video-detail-page">
+      <div className="video-header">
+        <h2>{video.title}</h2>
 
-          <div className="profil-avatar-bar">
-            <img
-              src={avatarPreview || 'https://via.placeholder.com/100'}
-              alt="avatar"
-              className="profil-avatar"
+        <div className="video-meta-info">
+          <span className="video-competition">{video.competition}</span>
+        </div>
+
+        <p className="video-description">{video.description}</p>
+      </div>
+
+      {videoId && (
+        <div className="video-player">
+          <iframe
+            width="100%"
+            height="400"
+            src={`https://www.youtube.com/embed/${videoId}`}
+            title="YouTube video player"
+            frameBorder="0"
+            allowFullScreen
+          />
+        </div>
+      )}
+
+      {user && (
+        <>
+          <div className="video-actions">
+            <button onClick={() => handleVote('like')}>👍 {likes}</button>
+            <button onClick={() => handleVote('dislike')}>👎 {dislikes}</button>
+          </div>
+
+          <form className="comment-form" onSubmit={handleCommentSubmit}>
+            <textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Votre commentaire"
+              rows={3}
             />
 
-            {!isPublicProfile && (
-              <div className="profil-buttons">
-                {!editAvatar ? (
-                  <button onClick={() => setEditAvatar(true)}>🖼 Changer de photo</button>
-                ) : (
-                  <>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (!file) return;
+            <button type="submit">💬 Publier</button>
+          </form>
+        </>
+      )}
 
-                        setAvatarFile(file);
-                        setAvatarPreview(URL.createObjectURL(file));
-                      }}
+      {message && <p className="video-message">{message}</p>}
+
+      <h3 className="comments-title">Commentaires</h3>
+
+      <div className="comments-section">
+        {comments.length === 0 && (
+          <p className="comments-empty">Aucun commentaire pour le moment.</p>
+        )}
+
+        {comments.map((c) => {
+          const author = typeof c.userId === 'object' && c.userId ? c.userId : null;
+
+          const authorId = author?._id;
+          const authorName = author?.username || 'Utilisateur';
+          const authorAvatar = author?.avatar || 'https://via.placeholder.com/80?text=👤';
+          const isOwnComment = user?.id === authorId || user?._id === authorId;
+
+          return (
+            <div key={c._id} className="comment-item">
+              <div className="comment-top">
+                {authorId ? (
+                  <Link to={`/profil/${authorId}`} className="comment-user-link">
+                    <img
+                      src={authorAvatar}
+                      alt={authorName}
+                      className="comment-avatar"
                     />
-                    <button onClick={handleUploadAvatar}>📤 Sauvegarder</button>
-                  </>
+
+                    <div className="comment-user-text">
+                      <span className="comment-author">{authorName}</span>
+                      <span className="comment-date">
+                        {c.createdAt
+                          ? new Date(c.createdAt).toLocaleDateString('fr-FR')
+                          : ''}
+                      </span>
+                    </div>
+                  </Link>
+                ) : (
+                  <div className="comment-user-link">
+                    <img
+                      src={authorAvatar}
+                      alt={authorName}
+                      className="comment-avatar"
+                    />
+
+                    <div className="comment-user-text">
+                      <span className="comment-author">{authorName}</span>
+                      <span className="comment-date">
+                        {c.createdAt
+                          ? new Date(c.createdAt).toLocaleDateString('fr-FR')
+                          : ''}
+                      </span>
+                    </div>
+                  </div>
                 )}
 
-                {!editBanner ? (
-                  <button onClick={() => setEditBanner(true)}>🎨 Changer la bannière</button>
-                ) : (
-                  <>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (!file) return;
+                {authorId && (
+                  <div className="comment-menu-wrapper" ref={menuRef}>
+                    <button
+                      type="button"
+                      className="comment-menu-button"
+                      onClick={() =>
+                        setOpenCommentMenu(openCommentMenu === c._id ? null : c._id)
+                      }
+                    >
+                      ⋮
+                    </button>
 
-                        setBannerFile(file);
-                        setBannerPreview(URL.createObjectURL(file));
-                      }}
-                    />
-                    <button onClick={handleUploadBanner}>📤 Sauvegarder</button>
-                  </>
+                    {openCommentMenu === c._id && (
+                      <div className="comment-dropdown">
+                        <button
+                          type="button"
+                          onClick={() => handleGoToProfile(authorId)}
+                        >
+                          👤 Voir le profil
+                        </button>
+
+                        {user && !isOwnComment && (
+                          <button
+                            type="button"
+                            onClick={() => handleSendMessage(authorId)}
+                          >
+                            💬 Envoyer un message
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
-            )}
-          </div>
 
-          <div className="profil-username">
-            {isPublicProfile ? (
-              <>
-                <h2>{user?.username}</h2>
-                <button type="button" onClick={handleSendMessage}>
-                  💬 Envoyer un message
-                </button>
-              </>
-            ) : !editName ? (
-              <>
-                <h2>{user?.username}</h2>
-                <button onClick={() => setEditName(true)}>✏️ Modifier</button>
-              </>
-            ) : (
-              <>
-                <input
-                  type="text"
-                  value={newUsername}
-                  onChange={(e) => setNewUsername(e.target.value)}
-                />
-                <button onClick={handleUpdateUsername}>💾 Sauvegarder</button>
-              </>
-            )}
-          </div>
-        </div>
-
-        <div className="profil-feed">
-          <h3>👍 Vidéos Likées</h3>
-
-          {likedVideos.length === 0 ? (
-            <p>Aucune vidéo likée.</p>
-          ) : (
-            likedVideos.map((video) => {
-              const youtubeId = video.videoUrl?.includes('v=')
-                ? video.videoUrl.split('v=')[1].split('&')[0]
-                : '';
-
-              return (
-                <div className="profil-video-card" key={video._id}>
-                  <Link to={`/video/${video._id}`}>
-                    <img
-                      src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
-                      alt={video.title}
-                    />
-                  </Link>
-
-                  <div className="profil-video-info">
-                    <span className="badge">{video.competition}</span>
-                    <span className="date">
-                      {new Date(video.createdAt).toLocaleDateString('fr-FR')}
-                    </span>
-                  </div>
-
-                  <h3>{video.title}</h3>
-                  <p>{video.description}</p>
-
-                  <div className="profil-stats">
-                    <span>👍 {video.likesCount}</span>
-                    <span>👎 {video.dislikesCount}</span>
-                    <span>💬 {video.commentCount}</span>
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
-      </main>
-
-      <aside className="profil-widgets">
-        <div className="widget">
-          <h4>📅 Prochain match</h4>
-
-          {matchLive ? (
-            <>
-              <p>{matchLive.homeTeam} vs {matchLive.awayTeam}</p>
-              <p>🏆 {matchLive.competition}</p>
-              <p>Score : {matchLive.score}</p>
-              <p>📝 {matchLive.events?.join(', ')}</p>
-            </>
-          ) : (
-            <p>Match non disponible</p>
-          )}
-        </div>
-
-        <div className="widget">
-          <h4>🧠 Composition officielle</h4>
-          <LineupDisplay composition={composition} />
-        </div>
-
-        <div className="widget">
-          <h4>🔵 Série de victoires</h4>
-          <ul>
-            {streak.map((entry, i) => (
-              <li key={i}>{entry}</li>
-            ))}
-          </ul>
-        </div>
-      </aside>
+              <div className="comment-content">{c.content}</div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
 
-export default Profil;
+export default VideoDetail;
