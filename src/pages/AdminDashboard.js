@@ -6,6 +6,7 @@ const API = 'https://back-barcapp.onrender.com/api';
 const AdminDashboard = () => {
   const [videos, setVideos] = useState([]);
   const [message, setMessage] = useState('');
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -54,89 +55,54 @@ const AdminDashboard = () => {
     }
   };
 
+  const filteredVideos = videos.filter((video) =>
+    video.title?.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="admin-dashboard-page">
-
       <div className="admin-dashboard-header">
-        <span className="admin-badge">
-          Administration
-        </span>
+        <span className="admin-badge">Administration</span>
 
         <h1>Gestion des vidéos</h1>
 
-        <p>
-          Retrouvez ici toutes les vidéos publiées sur Barçapp.
-        </p>
+        <p>Retrouvez ici toutes les vidéos publiées sur Barçapp.</p>
       </div>
 
-      {message && (
-        <div className="admin-message">
-          {message}
-        </div>
-      )}
+      <input
+        type="text"
+        className="admin-search-input"
+        placeholder="🔎 Rechercher une vidéo par titre..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
+      {message && <div className="admin-message">{message}</div>}
 
       <div className="admin-video-grid">
-
-        {videos.length === 0 ? (
-          <p>Aucune vidéo trouvée.</p>
+        {filteredVideos.length === 0 ? (
+          <p className="admin-empty">Aucune vidéo trouvée.</p>
         ) : (
-
-          videos.map((video) => {
-
-            const youtubeId =
-              video.videoUrl?.includes('v=')
-                ? video.videoUrl.split('v=')[1].split('&')[0]
-                : '';
+          filteredVideos.map((video) => {
+            const youtubeId = video.videoUrl?.includes('v=')
+              ? video.videoUrl.split('v=')[1].split('&')[0]
+              : '';
 
             return (
-
-              <div
-                key={video._id}
-                className="admin-video-card"
-              >
-
-                <a
-                  href={video.videoUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {youtubeId ? (
-                    <img
-                      src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
-                      alt={video.title}
-                    />
-                  ) : (
-                    <div className="admin-thumbnail-empty">
-                      Miniature indisponible
-                    </div>
-                  )}
-                </a>
+              <div key={video._id} className="admin-video-card">
+                {youtubeId ? (
+                  <img
+                    src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
+                    alt={video.title}
+                  />
+                ) : (
+                  <div className="admin-thumbnail-empty">
+                    Miniature indisponible
+                  </div>
+                )}
 
                 <div className="admin-video-content">
-
-                  <span className="competition">
-                    {video.competition}
-                  </span>
-
-                  <h3>
-                    {video.title}
-                  </h3>
-
-                  <p>
-                    {video.description}
-                  </p>
-
-                  <div className="admin-video-stats">
-
-                    <span>
-                      💬 {video.commentCount}
-                    </span>
-
-                    <span>
-                      {video.isPrivate ? '🔒 Privée' : '🌍 Publique'}
-                    </span>
-
-                  </div>
+                  <h3>{video.title}</h3>
 
                   <button
                     className="delete-video-btn"
@@ -144,18 +110,12 @@ const AdminDashboard = () => {
                   >
                     🗑 Supprimer
                   </button>
-
                 </div>
-
               </div>
-
             );
           })
-
         )}
-
       </div>
-
     </div>
   );
 };
