@@ -1,0 +1,160 @@
+.admin-users-page {
+  padding: 24px;
+  color: white;
+}
+
+.admin-users-header {
+  background: linear-gradient(135deg, #071f49, #06397e);
+  border-radius: 22px;
+  padding: 28px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(253, 185, 19, 0.25);
+}
+
+.admin-users-badge {
+  display: inline-block;
+  background: #FDB913;
+  color: #111;
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-weight: bold;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.admin-users-header h1 {
+  margin: 0 0 10px;
+  color: #FDB913;
+  font-size: 34px;
+}
+
+.admin-users-header p {
+  margin: 0;
+  color: #ddd;
+}
+
+.admin-users-message {
+  background: #06397e;
+  padding: 14px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #174a9c;
+}
+
+.admin-users-loading {
+  color: white;
+  padding: 24px;
+}
+
+.admin-users-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-user-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #071f49;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid #174a9c;
+  transition: 0.2s ease;
+}
+
+.admin-user-card:hover {
+  transform: translateY(-2px);
+}
+
+.admin-user-card.blocked {
+  border: 2px solid #ff4d4d;
+}
+
+.admin-user-avatar {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: white;
+  border: 3px solid #FDB913;
+}
+
+.admin-user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-user-info h3 {
+  margin: 0;
+  color: #FDB913;
+}
+
+.admin-user-info p {
+  margin: 5px 0;
+  color: #ddd;
+  font-size: 14px;
+}
+
+.admin-user-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 13px;
+}
+
+.status-active {
+  color: #5cff8d;
+  font-weight: bold;
+}
+
+.status-blocked {
+  color: #ff4d4d;
+  font-weight: bold;
+}
+
+.admin-user-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.admin-user-actions select {
+  padding: 9px;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+}
+
+.admin-user-actions button {
+  padding: 9px 13px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: black;
+  font-weight: bold;
+}
+
+.block-btn {
+  background: #ff4d4d;
+}
+
+.unblock-btn {
+  background: #5cff8d;
+}
+
+@media (max-width: 800px) {
+  .admin-user-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-user-actions {
+    width: 100%;
+  }
+
+  .admin-user-actions select,
+  .admin-user-actions button {
+    flex: 1;
+  }
+}

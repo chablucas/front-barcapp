@@ -1,0 +1,137 @@
+.admin-dashboard-page{
+    padding:24px;
+    color:white;
+}
+
+.admin-dashboard-header{
+    background:linear-gradient(135deg,#071f49,#06397e);
+    border-radius:22px;
+    padding:30px;
+    margin-bottom:30px;
+    border:1px solid rgba(253,185,19,.25);
+}
+
+.admin-badge{
+    display:inline-block;
+    background:#FDB913;
+    color:#111;
+    padding:7px 13px;
+    border-radius:999px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.admin-dashboard-header h1{
+    margin:0;
+    color:#FDB913;
+    font-size:36px;
+}
+
+.admin-dashboard-header p{
+    margin-top:12px;
+    color:#ddd;
+}
+
+.admin-message{
+    background:#06397e;
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:20px;
+}
+
+.admin-video-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(330px,1fr));
+    gap:22px;
+}
+
+.admin-video-card{
+    background:#071f49;
+    border-radius:18px;
+    overflow:hidden;
+    border:1px solid #174a9c;
+    transition:.2s;
+}
+
+.admin-video-card:hover{
+    transform:translateY(-4px);
+}
+
+.admin-video-card img{
+    width:100%;
+    display:block;
+}
+
+.admin-thumbnail-empty{
+    height:180px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#222;
+}
+
+.admin-video-content{
+    padding:18px;
+}
+
+.competition{
+    display:inline-block;
+    background:#FDB913;
+    color:#111;
+    padding:5px 10px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:bold;
+    margin-bottom:12px;
+}
+
+.admin-video-content h3{
+    margin:0 0 12px;
+    color:#FDB913;
+}
+
+.admin-video-content p{
+    color:#ddd;
+    line-height:1.5;
+    min-height:70px;
+}
+
+.admin-video-stats{
+    display:flex;
+    justify-content:space-between;
+    margin:18px 0;
+    color:#ddd;
+    font-size:14px;
+}
+
+.delete-video-btn{
+    width:100%;
+    border:none;
+    border-radius:10px;
+    padding:11px;
+    cursor:pointer;
+    font-weight:bold;
+    background:#ff4d4d;
+    color:white;
+    transition:.2s;
+}
+
+.delete-video-btn:hover{
+    background:#ff2d2d;
+}
+
+@media(max-width:700px){
+
+.admin-dashboard-page{
+    padding:16px;
+}
+
+.admin-dashboard-header h1{
+    font-size:28px;
+}
+
+.admin-video-grid{
+    grid-template-columns:1fr;
+}
+
+}

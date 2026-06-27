@@ -1,0 +1,58 @@
+.search-user-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #06397e;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+  transition: 0.2s;
+}
+
+.search-user-card:hover {
+  transform: translateY(-2px);
+}
+
+.search-user-link {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+}
+
+.search-user-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #FDB913;
+  background: white;
+}
+
+.search-user-name {
+  margin: 0;
+  color: #FDB913;
+  font-size: 18px;
+}
+
+.search-user-role {
+  margin-top: 4px;
+  color: #ddd;
+  font-size: 13px;
+}
+
+.search-message-btn {
+  padding: 9px 15px;
+  border: none;
+  border-radius: 10px;
+  background: #FDB913;
+  color: #111;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.search-message-btn:hover {
+  background: #ffd54d;
+}

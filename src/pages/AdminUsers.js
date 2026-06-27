@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import './AdminUsers.css';
 
 const API = 'https://back-barcapp.onrender.com/api';
 
@@ -27,7 +28,6 @@ const AdminUsers = () => {
 
       setUsers(data);
     } catch (err) {
-      console.error(err.message);
       setMessage(err.message);
     } finally {
       setLoading(false);
@@ -89,106 +89,59 @@ const AdminUsers = () => {
   };
 
   if (loading) {
-    return (
-      <p style={{ color: 'white', padding: '20px' }}>
-        Chargement des utilisateurs...
-      </p>
-    );
+    return <p className="admin-users-loading">Chargement des utilisateurs...</p>;
   }
 
   return (
-    <div style={{ padding: '25px', color: 'white' }}>
-      <h1 style={{ color: '#FDB913', marginBottom: '10px' }}>
-        Gestion des utilisateurs
-      </h1>
+    <div className="admin-users-page">
+      <div className="admin-users-header">
+        <span className="admin-users-badge">Admin</span>
+        <h1>Gestion des utilisateurs</h1>
+        <p>Bloque les utilisateurs abusifs ou modifie les rôles.</p>
+      </div>
 
-      <p style={{ color: '#ddd', marginBottom: '20px' }}>
-        Bloque les utilisateurs abusifs ou modifie les rôles.
-      </p>
+      {message && <div className="admin-users-message">{message}</div>}
 
-      {message && (
-        <p
-          style={{
-            backgroundColor: '#06397e',
-            padding: '12px',
-            borderRadius: '10px',
-            marginBottom: '20px',
-          }}
-        >
-          {message}
-        </p>
-      )}
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+      <div className="admin-users-list">
         {users.map((user) => (
           <div
             key={user._id}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '15px',
-              backgroundColor: '#071f49',
-              padding: '15px',
-              borderRadius: '14px',
-              border: user.isBlocked ? '2px solid #ff4d4d' : '1px solid #174a9c',
-            }}
+            className={`admin-user-card ${user.isBlocked ? 'blocked' : ''}`}
           >
             <img
               src={user.avatar || 'https://via.placeholder.com/50?text=👤'}
               alt={user.username || user.email}
-              style={{
-                width: '55px',
-                height: '55px',
-                borderRadius: '50%',
-                objectFit: 'cover',
-                backgroundColor: 'white',
-              }}
+              className="admin-user-avatar"
             />
 
-            <div style={{ flex: 1 }}>
-              <h3 style={{ margin: 0, color: '#FDB913' }}>
-                {user.username || 'Sans pseudo'}
-              </h3>
+            <div className="admin-user-info">
+              <h3>{user.username || 'Sans pseudo'}</h3>
+              <p>{user.email}</p>
 
-              <p style={{ margin: '4px 0', color: '#ddd', fontSize: '14px' }}>
-                {user.email}
-              </p>
-
-              <p style={{ margin: 0, fontSize: '13px' }}>
-                Rôle : <strong>{user.role}</strong> | Statut :{' '}
-                <strong style={{ color: user.isBlocked ? '#ff4d4d' : '#5cff8d' }}>
+              <div className="admin-user-meta">
+                <span>Rôle : <strong>{user.role}</strong></span>
+                <span className={user.isBlocked ? 'status-blocked' : 'status-active'}>
                   {user.isBlocked ? 'Bloqué' : 'Actif'}
-                </strong>
-              </p>
+                </span>
+              </div>
             </div>
 
-            <select
-              value={user.role}
-              onChange={(e) => changeRole(user._id, e.target.value)}
-              style={{
-                padding: '8px',
-                borderRadius: '8px',
-                border: 'none',
-              }}
-            >
-              <option value="user">user</option>
-              <option value="admin">admin</option>
-            </select>
+            <div className="admin-user-actions">
+              <select
+                value={user.role}
+                onChange={(e) => changeRole(user._id, e.target.value)}
+              >
+                <option value="user">user</option>
+                <option value="admin">admin</option>
+              </select>
 
-            <button
-              onClick={() => toggleBlock(user._id)}
-              style={{
-                padding: '9px 13px',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                backgroundColor: user.isBlocked ? '#5cff8d' : '#ff4d4d',
-                color: 'black',
-                fontWeight: 'bold',
-              }}
-            >
-              {user.isBlocked ? 'Débloquer' : 'Bloquer'}
-            </button>
+              <button
+                onClick={() => toggleBlock(user._id)}
+                className={user.isBlocked ? 'unblock-btn' : 'block-btn'}
+              >
+                {user.isBlocked ? 'Débloquer' : 'Bloquer'}
+              </button>
+            </div>
           </div>
         ))}
       </div>

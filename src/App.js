@@ -16,6 +16,7 @@ import Home from './pages/Home';
 import AdminWidgets from './pages/AdminWidgets';
 import Messages from './pages/Messages';
 import AdminUsers from './pages/AdminUsers';
+import AdminDashboard from './pages/AdminDashboard';
 
 import './App.css';
 
@@ -41,6 +42,7 @@ function App() {
           <Route path="/admin/widgets" element={<MainLayout><AdminWidgets /></MainLayout>} />
           <Route path="/messages" element={<MainLayout><Messages /></MainLayout>} />
           <Route path="/admin/users" element={<MainLayout><AdminUsers /></MainLayout>} />
+          <Route path="/admin/dashboard" element={<MainLayout><AdminDashboard /></MainLayout>} />
         </Routes>
       </div>
     </Router>

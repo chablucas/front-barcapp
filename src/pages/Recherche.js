@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
+import './Recherche.css';
 
 const API = 'https://back-barcapp.onrender.com/api';
 
@@ -33,9 +34,10 @@ const Recherche = () => {
         if (Array.isArray(videosData)) {
           const lower = query.toLowerCase();
 
-          const filteredVideos = videosData.filter(v =>
-            v.title?.toLowerCase().includes(lower) ||
-            v.description?.toLowerCase().includes(lower)
+          const filteredVideos = videosData.filter(
+            (v) =>
+              v.title?.toLowerCase().includes(lower) ||
+              v.description?.toLowerCase().includes(lower)
           );
 
           setVideos(filteredVideos);
@@ -46,11 +48,14 @@ const Recherche = () => {
         const token = localStorage.getItem('token');
 
         if (token) {
-          const usersRes = await fetch(`${API}/users/search?q=${encodeURIComponent(query)}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+          const usersRes = await fetch(
+            `${API}/users/search?q=${encodeURIComponent(query)}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
 
           const usersData = await usersRes.json();
 
@@ -96,7 +101,7 @@ const Recherche = () => {
         throw new Error(data.message || 'Erreur création conversation');
       }
 
-      navigate('/messages');
+      navigate(`/messages?conversationId=${data._id}`);
     } catch (err) {
       console.error('Erreur conversation :', err.message);
       alert(err.message);
@@ -104,139 +109,100 @@ const Recherche = () => {
   };
 
   return (
-    <div className="videos-container">
-      <h2 style={{ color: 'white', margin: '20px' }}>
-        Recherche
-      </h2>
+    <div className="recherche-page">
+      <h2 className="recherche-title">Recherche</h2>
 
       {!hasQuery && (
-        <p style={{ padding: '20px', color: 'white' }}>
+        <p className="recherche-info">
           Lance une recherche depuis la barre en haut.
         </p>
       )}
 
       {loading && (
-        <p style={{ padding: '20px', color: 'white' }}>
+        <p className="recherche-info">
           Recherche en cours...
         </p>
       )}
 
       {!loading && hasQuery && (
         <>
-          <h2 style={{ color: 'white', margin: '20px' }}>
+          <h2 className="recherche-subtitle">
             Résultats pour : "{query}"
           </h2>
 
           {users.length > 0 && (
-            <div style={{ margin: '20px' }}>
-              <h3 style={{ color: '#FDB913', marginBottom: '15px' }}>
-                Utilisateurs
-              </h3>
+            <section className="recherche-section">
+              <h3 className="recherche-section-title">Utilisateurs</h3>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '750px' }}>
+              <div className="search-users-list">
                 {users.map((user) => (
-                  <div
-                    key={user._id}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      backgroundColor: '#06397e',
-                      padding: '12px',
-                      borderRadius: '12px',
-                    }}
-                  >
-                    <img
-                      src={user.avatar || 'https://via.placeholder.com/50'}
-                      alt={user.username}
-                      style={{
-                        width: '52px',
-                        height: '52px',
-                        borderRadius: '50%',
-                        objectFit: 'cover',
-                        border: '3px solid #FDB913',
-                        backgroundColor: 'white',
-                      }}
-                    />
+                  <div className="search-user-card" key={user._id}>
+                    <Link to={`/profil/${user._id}`} className="search-user-link">
+                      <img
+                        src={user.avatar || 'https://via.placeholder.com/50'}
+                        alt={user.username}
+                        className="search-user-avatar"
+                      />
 
-                    <div style={{ flex: 1 }}>
-                      <h4 style={{ margin: 0, color: '#FDB913' }}>
-                        {user.username}
-                      </h4>
+                      <div>
+                        <h4 className="search-user-name">
+                          {user.username}
+                        </h4>
 
-                      <p style={{ margin: '4px 0 0', color: '#ddd', fontSize: '13px' }}>
-                        {user.role === 'admin' ? 'Administrateur' : 'Utilisateur'}
-                      </p>
-                    </div>
+                        <p className="search-user-role">
+                          {user.role === 'admin' ? 'Administrateur' : 'Utilisateur'}
+                        </p>
+                      </div>
+                    </Link>
 
                     <button
+                      type="button"
+                      className="search-message-btn"
                       onClick={() => handleStartConversation(user._id)}
-                      style={{
-                        padding: '8px 12px',
-                        border: 'none',
-                        borderRadius: '8px',
-                        backgroundColor: '#FDB913',
-                        color: 'black',
-                        fontWeight: 'bold',
-                        cursor: 'pointer',
-                      }}
                     >
                       💬 Message privé
                     </button>
                   </div>
                 ))}
               </div>
-            </div>
+            </section>
           )}
 
-          <h3 style={{ color: '#FDB913', margin: '20px' }}>
-            Vidéos
-          </h3>
+          <section className="recherche-section">
+            <h3 className="recherche-section-title">Vidéos</h3>
 
-          {videos.length === 0 ? (
-            <p style={{ padding: '20px', color: 'white' }}>
-              Aucune vidéo trouvée.
-            </p>
-          ) : (
-            <div className="videos-grid">
-              {videos.map((video) => {
-                const youtubeId = video.videoUrl?.includes('v=')
-                  ? video.videoUrl.split('v=')[1].split('&')[0]
-                  : '';
+            {videos.length === 0 ? (
+              <p className="recherche-info">Aucune vidéo trouvée.</p>
+            ) : (
+              <div className="videos-grid">
+                {videos.map((video) => {
+                  const youtubeId = video.videoUrl?.includes('v=')
+                    ? video.videoUrl.split('v=')[1].split('&')[0]
+                    : '';
 
-                return (
-                  <div className="video-card" key={video._id}>
-                    <Link to={`/video/${video._id}`}>
-                      {youtubeId ? (
-                        <img
-                          src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
-                          alt={video.title}
-                        />
-                      ) : (
-                        <div
-                          style={{
-                            width: '320px',
-                            height: '180px',
-                            background: '#222',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            color: 'white',
-                            fontSize: '14px',
-                          }}
-                        >
-                          Miniature indisponible
-                        </div>
-                      )}
-                    </Link>
+                  return (
+                    <div className="video-card" key={video._id}>
+                      <Link to={`/video/${video._id}`}>
+                        {youtubeId ? (
+                          <img
+                            src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
+                            alt={video.title}
+                          />
+                        ) : (
+                          <div className="video-thumbnail-empty">
+                            Miniature indisponible
+                          </div>
+                        )}
+                      </Link>
 
-                    <h3>{video.title}</h3>
-                    <p>{video.description}</p>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                      <h3>{video.title}</h3>
+                      <p>{video.description}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </section>
         </>
       )}
     </div>
