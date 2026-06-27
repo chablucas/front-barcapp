@@ -84,6 +84,7 @@ const VideoDetail = () => {
       setLikes(data.likes);
       setDislikes(data.dislikes);
     } catch (err) {
+      console.error(err);
       setMessage('Erreur vote');
     }
   };
@@ -122,12 +123,46 @@ const VideoDetail = () => {
 
   const handleGoToProfile = (authorId) => {
     setOpenCommentMenu(null);
+
+    if (!authorId) return;
+
     navigate(`/profil/${authorId}`);
   };
 
-  const handleSendMessage = (authorId) => {
+  const handleSendMessage = async (authorId) => {
     setOpenCommentMenu(null);
-    navigate(`/messages?user=${authorId}`);
+
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    if (!authorId) {
+      setMessage('Utilisateur introuvable.');
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API}/conversations/start/${authorId}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Erreur création conversation');
+      }
+
+      navigate(`/messages?conversation=${data._id}`);
+    } catch (err) {
+      console.error(err);
+      setMessage(err.message || 'Erreur lors de l’ouverture de la conversation.');
+    }
   };
 
   if (!video) return <p>Chargement...</p>;
@@ -249,12 +284,18 @@ const VideoDetail = () => {
 
                     {openCommentMenu === c._id && (
                       <div className="comment-dropdown">
-                        <button onClick={() => handleGoToProfile(authorId)}>
+                        <button
+                          type="button"
+                          onClick={() => handleGoToProfile(authorId)}
+                        >
                           👤 Voir le profil
                         </button>
 
                         {user && !isOwnComment && (
-                          <button onClick={() => handleSendMessage(authorId)}>
+                          <button
+                            type="button"
+                            onClick={() => handleSendMessage(authorId)}
+                          >
                             💬 Envoyer un message
                           </button>
                         )}
