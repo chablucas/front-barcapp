@@ -1,16 +1,61 @@
+.recherche-page {
+  padding: 24px;
+  color: white;
+}
+
+.recherche-title,
+.recherche-subtitle {
+  color: #FDB913;
+  margin: 0 0 18px;
+}
+
+.recherche-title {
+  font-size: 34px;
+}
+
+.recherche-subtitle {
+  font-size: 24px;
+}
+
+.recherche-info {
+  color: #ddd;
+  background: #071f49;
+  border: 1px solid #174a9c;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.recherche-section {
+  margin-top: 26px;
+}
+
+.recherche-section-title {
+  color: #FDB913;
+  margin-bottom: 16px;
+}
+
+.search-users-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 850px;
+}
+
 .search-user-card {
   display: flex;
   align-items: center;
-  gap: 14px;
-  background: #06397e;
-  border-radius: 14px;
-  padding: 14px;
-  margin-bottom: 12px;
-  transition: 0.2s;
+  gap: 16px;
+  background: #071f49;
+  border: 1px solid #174a9c;
+  border-radius: 18px;
+  padding: 16px;
+  transition: 0.2s ease;
 }
 
 .search-user-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  border-color: rgba(253, 185, 19, 0.45);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.22);
 }
 
 .search-user-link {
@@ -19,40 +64,71 @@
   align-items: center;
   gap: 14px;
   text-decoration: none;
+  cursor: pointer;
+  min-width: 0;
 }
 
 .search-user-avatar {
-  width: 56px;
-  height: 56px;
+  width: 62px;
+  height: 62px;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid #FDB913;
   background: white;
+  flex-shrink: 0;
 }
 
 .search-user-name {
   margin: 0;
   color: #FDB913;
-  font-size: 18px;
+  font-size: 19px;
 }
 
 .search-user-role {
-  margin-top: 4px;
+  margin: 5px 0 0;
   color: #ddd;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .search-message-btn {
-  padding: 9px 15px;
+  padding: 10px 15px;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   background: #FDB913;
   color: #111;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
-  transition: 0.2s;
+  transition: 0.2s ease;
+  flex-shrink: 0;
 }
 
 .search-message-btn:hover {
   background: #ffd54d;
+  transform: translateY(-1px);
+}
+
+.video-thumbnail-empty {
+  width: 100%;
+  height: 180px;
+  background: #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+}
+
+@media (max-width: 700px) {
+  .recherche-page {
+    padding: 16px;
+  }
+
+  .search-user-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .search-message-btn {
+    width: 100%;
+  }
 }
