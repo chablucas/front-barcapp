@@ -1,19 +1,25 @@
 .main-layout {
   min-height: 100vh;
+  width: 100%;
   background-color: #004D98;
   color: white;
+  overflow-x: hidden;
 }
 
 .main-body {
   display: flex;
   align-items: stretch;
+  width: 100%;
   min-height: calc(100vh - 70px);
 }
 
 .main-content {
   flex: 1;
-  padding: 20px;
+  width: 100%;
+  min-width: 0;
   min-height: calc(100vh - 70px);
+  padding: 0;
+  box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
