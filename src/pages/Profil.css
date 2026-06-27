@@ -2,16 +2,19 @@
   width: 100%;
   min-height: calc(100vh - 70px);
   box-sizing: border-box;
-  display: block;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 28px;
   padding: 28px;
   background: linear-gradient(135deg, #004D98 0%, #003b78 55%, #001f4d 100%);
   color: white;
 }
 
 .profil-main {
-  width: 100%;
-  max-width: none;
+  flex: 1;
   min-width: 0;
+  max-width: calc(100% - 388px);
 }
 
 .profil-header {
@@ -163,9 +166,16 @@
   font-size: 14px;
 }
 
-/* On cache les widgets sur le profil pour laisser le profil pleine largeur */
 .profil-widgets {
-  display: none;
+  width: 360px;
+  flex-shrink: 0;
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: sticky;
+  top: 100px;
+  height: fit-content;
 }
 
 .widget {
@@ -211,7 +221,19 @@
 
 @media (max-width: 950px) {
   .profil-page {
+    flex-direction: column;
     padding: 18px;
+  }
+
+  .profil-main {
+    width: 100%;
+    max-width: none;
+  }
+
+  .profil-widgets {
+    width: 100%;
+    position: static;
+    margin-left: 0;
   }
 }
 
